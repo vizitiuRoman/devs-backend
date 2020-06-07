@@ -9,6 +9,8 @@ type ArticleModel interface {
 	BeforeCreate()
 	AfterSave()
 	AfterCreate()
+	Prepare()
+	Validate() error
 }
 
 type Article struct {

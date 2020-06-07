@@ -9,6 +9,8 @@ type JobModel interface {
 	BeforeCreate()
 	AfterSave()
 	AfterCreate()
+	Prepare()
+	Validate() error
 }
 
 type Job struct {

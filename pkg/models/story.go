@@ -9,6 +9,8 @@ type StoryModel interface {
 	BeforeCreate()
 	AfterSave()
 	AfterCreate()
+	Prepare()
+	Validate() error
 }
 
 type Story struct {

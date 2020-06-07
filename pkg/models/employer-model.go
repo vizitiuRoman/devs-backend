@@ -9,6 +9,8 @@ type EmployerModel interface {
 	BeforeCreate()
 	AfterSave()
 	AfterCreate()
+	Prepare()
+	Validate() error
 }
 
 type Employer struct {

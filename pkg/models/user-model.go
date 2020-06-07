@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"time"
 )
 
@@ -9,10 +10,13 @@ type UserModel interface {
 	BeforeCreate()
 	AfterSave()
 	AfterCreate()
+	Prepare()
+	Validate() error
 }
 
 type User struct {
 	ID        uint32    `gorm:"not nul;auto_increment" json:"id"`
+	Email     string    `json:"email"`
 	CreatedAt time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
 	UpdateAt  time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"update_at"`
 }
@@ -36,7 +40,9 @@ func (user *User) Prepare() {
 }
 
 func (user *User) Validate() error {
-
+	if user.Email == "" {
+		return errors.New("REQUIRE EMAIL")
+	}
 	return nil
 }
 

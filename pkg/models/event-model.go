@@ -9,6 +9,8 @@ type EventModel interface {
 	BeforeCreate()
 	AfterSave()
 	AfterCreate()
+	Prepare()
+	Validate() error
 }
 
 type Event struct {

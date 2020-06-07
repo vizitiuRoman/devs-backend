@@ -9,6 +9,8 @@ type ProjectModel interface {
 	BeforeCreate()
 	AfterSave()
 	AfterCreate()
+	Prepare()
+	Validate() error
 }
 
 type Project struct {
