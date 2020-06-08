@@ -27,7 +27,7 @@ var (
 )
 
 type response struct {
-	UserId   uint32 `json:"userId"`
+	UserID   uint32 `json:"userId"`
 	Name     string `json:"name"`
 	LastName string `json:"lastName"`
 	Token    string `json:"token"`
@@ -74,7 +74,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	res := response{
-		UserId:   receivedUser.ID,
+		UserID:   receivedUser.ID,
 		Name:     receivedUser.Name,
 		LastName: receivedUser.LastName,
 		Token:    token,
@@ -127,7 +127,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	res := response{
-		UserId:   createdUser.ID,
+		UserID:   createdUser.ID,
 		Name:     createdUser.Name,
 		LastName: createdUser.LastName,
 		Token:    token,
