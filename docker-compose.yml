@@ -1,0 +1,13 @@
+version: '2.1'
+
+services:
+  golang:
+    image: postgres:9.6.2-alpine
+    networks:
+      - default
+    ports:
+      - '5430:5432'
+    environment:
+      POSTGRES_USER: devsmd-dev
+      POSTGRES_PASSWORD: devsmd-dev
+      POSTGRES_DB: devsmd-dev
