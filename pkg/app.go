@@ -2,11 +2,13 @@ package pkg
 
 import (
 	"fmt"
-	. "github.com/devsmd/pkg/routes"
-	. "github.com/gorilla/handlers"
 	"log"
 	"net/http"
 	"os"
+
+	//_ "github.com/devsmd/pkg/models"
+	. "github.com/devsmd/pkg/routes"
+	. "github.com/gorilla/handlers"
 )
 
 func Serve() {
