@@ -15,7 +15,7 @@ func InitRoutes() (*mux.Router, CORSOption, CORSOption, CORSOption) {
 	origins := AllowedOrigins([]string{"*"})
 
 	// Home Router
-	router.HandleFunc("/api/home", MiddlewareAuth(GetHome)).Methods("GET")
+	router.HandleFunc("/api/home", MiddlewareAUTH(GetHome)).Methods("GET")
 
 	// User Router
 	router.HandleFunc("/login", MiddlewareJSON(Login)).Methods("POST")

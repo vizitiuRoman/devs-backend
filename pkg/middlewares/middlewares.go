@@ -14,7 +14,7 @@ func MiddlewareJSON(next http.HandlerFunc) http.HandlerFunc {
 	}
 }
 
-func MiddlewareAuth(next http.HandlerFunc) http.HandlerFunc {
+func MiddlewareAUTH(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		err := TokenValid(r)
 		if err != nil {
