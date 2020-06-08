@@ -5,29 +5,22 @@ import (
 )
 
 type JobModel interface {
-	BeforeSave()
-	BeforeCreate()
-	AfterSave()
-	AfterCreate()
+	BeforeSave() error
 	Prepare()
-	Validate() error
+	Validate(action string) error
 }
 
 type Job struct {
-	ID        uint32    `gorm:"not nul;auto_increment" json:"id"`
+	ID        uint32    `gorm:"not null;auto_increment" json:"id"`
 	CreatedAt time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
 	UpdateAt  time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"update_at"`
 }
 
-// Hooks https://gorm.io/docs/hooks.html
+// Hooks
 
-func (job *Job) BeforeSave() {}
-
-func (job *Job) BeforeCreate() {}
-
-func (job *Job) AfterSave() {}
-
-func (job *Job) AfterCreate() {}
+func (job *Job) BeforeSave() error {
+	return nil
+}
 
 // Prepare/Validate
 
@@ -37,7 +30,7 @@ func (job *Job) Prepare() {
 	job.UpdateAt = time.Now()
 }
 
-func (job *Job) Validate() error {
+func (job *Job) Validate(action string) error {
 
 	return nil
 }

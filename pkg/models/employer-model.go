@@ -5,29 +5,22 @@ import (
 )
 
 type EmployerModel interface {
-	BeforeSave()
-	BeforeCreate()
-	AfterSave()
-	AfterCreate()
+	BeforeSave() error
 	Prepare()
-	Validate() error
+	Validate(action string) error
 }
 
 type Employer struct {
-	ID        uint32    `gorm:"not nul;auto_increment" json:"id"`
+	ID        uint32    `gorm:"not null;auto_increment" json:"id"`
 	CreatedAt time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
 	UpdateAt  time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"update_at"`
 }
 
-// Hooks https://gorm.io/docs/hooks.html
+// Hooks
 
-func (employer *Employer) BeforeSave() {}
-
-func (employer *Employer) BeforeCreate() {}
-
-func (employer *Employer) AfterSave() {}
-
-func (employer *Employer) AfterCreate() {}
+func (employer *Employer) BeforeSave() error {
+	return nil
+}
 
 // Prepare/Validate
 
@@ -37,7 +30,7 @@ func (employer *Employer) Prepare() {
 	employer.UpdateAt = time.Now()
 }
 
-func (employer *Employer) Validate() error {
+func (employer *Employer) Validate(action string) error {
 
 	return nil
 }

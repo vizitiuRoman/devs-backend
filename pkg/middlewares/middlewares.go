@@ -21,6 +21,7 @@ func MiddlewareAuth(next http.HandlerFunc) http.HandlerFunc {
 			ERROR(w, http.StatusUnauthorized, err)
 			return
 		}
+		w.Header().Set("Content-Type", "application/json")
 		next(w, r)
 	}
 }

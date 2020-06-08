@@ -5,29 +5,22 @@ import (
 )
 
 type ProjectModel interface {
-	BeforeSave()
-	BeforeCreate()
-	AfterSave()
-	AfterCreate()
+	BeforeSave() error
 	Prepare()
-	Validate() error
+	Validate(action string) error
 }
 
 type Project struct {
-	ID        uint32    `gorm:"not nul;auto_increment" json:"id"`
+	ID        uint32    `gorm:"not null;auto_increment" json:"id"`
 	CreatedAt time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
 	UpdateAt  time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"update_at"`
 }
 
-// Hooks https://gorm.io/docs/hooks.html
+// Hooks
 
-func (project *Project) BeforeSave() {}
-
-func (project *Project) BeforeCreate() {}
-
-func (project *Project) AfterSave() {}
-
-func (project *Project) AfterCreate() {}
+func (project *Project) BeforeSave() error {
+	return nil
+}
 
 // Prepare/Validate
 
@@ -37,7 +30,7 @@ func (project *Project) Prepare() {
 	project.UpdateAt = time.Now()
 }
 
-func (project *Project) Validate() error {
+func (project *Project) Validate(action string) error {
 
 	return nil
 }

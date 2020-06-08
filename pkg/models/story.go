@@ -5,29 +5,22 @@ import (
 )
 
 type StoryModel interface {
-	BeforeSave()
-	BeforeCreate()
-	AfterSave()
-	AfterCreate()
+	BeforeSave() error
 	Prepare()
-	Validate() error
+	Validate(action string) error
 }
 
 type Story struct {
-	ID        uint32    `gorm:"not nul;auto_increment" json:"id"`
+	ID        uint32    `gorm:"not null;auto_increment" json:"id"`
 	CreatedAt time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
 	UpdateAt  time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"update_at"`
 }
 
-// Hooks https://gorm.io/docs/hooks.html
+// Hooks
 
-func (story *Story) BeforeSave() {}
-
-func (story *Story) BeforeCreate() {}
-
-func (story *Story) AfterSave() {}
-
-func (story *Story) AfterCreate() {}
+func (story *Story) BeforeSave() error {
+	return nil
+}
 
 // Prepare/Validate
 
@@ -37,7 +30,7 @@ func (story *Story) Prepare() {
 	story.UpdateAt = time.Now()
 }
 
-func (story *Story) Validate() error {
+func (story *Story) Validate(action string) error {
 
 	return nil
 }

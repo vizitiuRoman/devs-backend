@@ -74,7 +74,7 @@ func TokenValid(r *http.Request) error {
 	return nil
 }
 
-func ExtractTokenID(r *http.Request) (uint32, error) {
+func EncodeToken(r *http.Request) (uint32, error) {
 	extractedToken := extractToken(r)
 	token, err := prepareToken(extractedToken)
 	if err != nil {

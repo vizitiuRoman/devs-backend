@@ -5,29 +5,22 @@ import (
 )
 
 type EventModel interface {
-	BeforeSave()
-	BeforeCreate()
-	AfterSave()
-	AfterCreate()
+	BeforeSave() error
 	Prepare()
-	Validate() error
+	Validate(action string) error
 }
 
 type Event struct {
-	ID        uint32    `gorm:"not nul;auto_increment" json:"id"`
+	ID        uint32    `gorm:"not null;auto_increment" json:"id"`
 	CreatedAt time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
 	UpdateAt  time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"update_at"`
 }
 
-// Hooks https://gorm.io/docs/hooks.html
+// Hooks
 
-func (event *Event) BeforeSave() {}
-
-func (event *Event) BeforeCreate() {}
-
-func (event *Event) AfterSave() {}
-
-func (event *Event) AfterCreate() {}
+func (event *Event) BeforeSave() error {
+	return nil
+}
 
 // Prepare/Validate
 
@@ -37,7 +30,7 @@ func (event *Event) Prepare() {
 	event.UpdateAt = time.Now()
 }
 
-func (event *Event) Validate() error {
+func (event *Event) Validate(action string) error {
 
 	return nil
 }

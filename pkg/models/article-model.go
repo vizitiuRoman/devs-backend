@@ -5,29 +5,22 @@ import (
 )
 
 type ArticleModel interface {
-	BeforeSave()
-	BeforeCreate()
-	AfterSave()
-	AfterCreate()
+	BeforeSave() error
 	Prepare()
-	Validate() error
+	Validate(action string) error
 }
 
 type Article struct {
-	ID        uint32    `gorm:"not nul;auto_increment" json:"id"`
+	ID        uint32    `gorm:"not null;auto_increment" json:"id"`
 	CreatedAt time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
 	UpdateAt  time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"update_at"`
 }
 
-// Hooks https://gorm.io/docs/hooks.html
+// Hooks
 
-func (article *Article) BeforeSave() {}
-
-func (article *Article) BeforeCreate() {}
-
-func (article *Article) AfterSave() {}
-
-func (article *Article) AfterCreate() {}
+func (article *Article) BeforeSave() error {
+	return nil
+}
 
 // Prepare/Validate
 
@@ -37,7 +30,7 @@ func (article *Article) Prepare() {
 	article.UpdateAt = time.Now()
 }
 
-func (article *Article) Validate() error {
+func (article *Article) Validate(action string) error {
 
 	return nil
 }
