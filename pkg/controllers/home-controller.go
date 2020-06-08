@@ -1,15 +1,19 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 
+	. "github.com/devsmd/pkg/auth"
 	. "github.com/devsmd/pkg/utils"
 )
 
 func GetHome(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, userDataSession)
+	userID := session.Values["userID"]
 
-	userId := session.Values["userId"]
+	encode, _ := EncodeToken(r)
+	fmt.Println(encode)
 
-	JSON(w, http.StatusOK, userId)
+	JSON(w, http.StatusOK, userID)
 }

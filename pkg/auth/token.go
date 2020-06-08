@@ -30,7 +30,7 @@ func extractToken(r *http.Request) string {
 }
 
 func pretty(data interface{}) {
-	_, err := json.MarshalIndent(data, "", "")
+	_, err := json.MarshalIndent(data, "", " ")
 	if err != nil {
 		log.Println(err)
 		return
@@ -52,10 +52,10 @@ func prepareToken(extractedToken string) (*jwt.Token, error) {
 
 // Public Func
 
-func CreateToken(userId uint32) (string, error) {
+func CreateToken(userID uint32) (string, error) {
 	claims := jwt.MapClaims{}
 	claims["authorized"] = true
-	claims["userId"] = userId
+	claims["userID"] = userID
 	claims["exp"] = time.Now().Add(time.Hour * 12).Unix()
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString([]byte(os.Getenv("API_SECRET")))
@@ -82,7 +82,7 @@ func EncodeToken(r *http.Request) (uint32, error) {
 	}
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		uid, err := strconv.ParseUint(fmt.Sprintf("%.0f", claims["userId"]), 10, 32)
+		uid, err := strconv.ParseUint(fmt.Sprintf("%.0f", claims["userID"]), 10, 32)
 		if err != nil {
 			return 0, err
 		}

@@ -16,7 +16,7 @@ type UserModel interface {
 	Validate(action string) error
 	Create() (*User, error)
 	UpdateById() (*User, error)
-	DeleteById() (*User, error)
+	DeleteById(userID uint32) (*User, error)
 	FindById() (*User, error)
 	FindByEmail() (*User, error)
 	FindAll() (*[]User, error)
@@ -59,27 +59,27 @@ func (user *User) Validate(action string) error {
 	switch strings.ToLower(action) {
 	case "login":
 		if user.Email == "" {
-			return errors.New("Required Email")
+			return errors.New("Required email")
 		}
 		if user.Password == "" {
-			return errors.New("Required Password")
+			return errors.New("Required password")
 		}
 		if err := checkmail.ValidateFormat(user.Email); err != nil {
-			return errors.New("Invalid Email")
+			return errors.New("Invalid email")
 		}
 		return nil
 	default:
 		if user.Email == "" {
-			return errors.New("Required Email")
+			return errors.New("Required email")
 		}
 		if user.Name == "" {
-			return errors.New("Required Name")
+			return errors.New("Required name")
 		}
 		if user.LastName == "" {
-			return errors.New("Required Last Name")
+			return errors.New("Required lastName")
 		}
 		if user.Password == "" {
-			return errors.New("Required Password")
+			return errors.New("Required password")
 		}
 		if err := checkmail.ValidateFormat(user.Email); err != nil {
 			return errors.New("Invalid Email")
@@ -125,12 +125,12 @@ func (user *User) UpdateById() (*User, error) {
 	return user, nil
 }
 
-func (user *User) DeleteById() (*User, error) {
-	err := db.Debug().Model(&User{}).Where("id = ?", user.ID).Take(&user).Delete(&user).Error
+func (user *User) DeleteById(userID uint32) (int64, error) {
+	err := db.Debug().Model(&User{}).Where("id = ?", userID).Take(&user).Delete(&user)
 	if err != nil {
-		return &User{}, err
+		return 0, err.Error
 	}
-	return user, nil
+	return err.RowsAffected, nil
 }
 
 func (user *User) FindById() (*User, error) {

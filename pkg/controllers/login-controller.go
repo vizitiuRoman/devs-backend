@@ -82,7 +82,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	session, _ := store.Get(r, userDataSession)
 	session.Values["authenticated"] = true
-	session.Values["userId"] = receivedUser.ID
+	session.Values["userID"] = receivedUser.ID
 	session.Save(r, w)
 
 	JSON(w, http.StatusOK, res)
@@ -117,7 +117,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 
 	session, _ := store.Get(r, userDataSession)
 	session.Values["authenticated"] = true
-	session.Values["userId"] = createdUser.ID
+	session.Values["userID"] = createdUser.ID
 	session.Save(r, w)
 
 	token, err := CreateToken(createdUser.ID)
@@ -141,7 +141,7 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 
 	session, _ := store.Get(r, userDataSession)
 	session.Values["authenticated"] = false
-	session.Values["userId"] = nil
+	session.Values["userID"] = nil
 	session.Save(r, w)
 
 	JSON(w, http.StatusOK, nil)
