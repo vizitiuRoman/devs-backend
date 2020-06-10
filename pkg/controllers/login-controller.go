@@ -9,14 +9,14 @@ import (
 	"os"
 
 	. "github.com/devsmd/pkg/auth"
-	. "github.com/devsmd/pkg/models"
+	. "github.com/devsmd/pkg/db/models"
 	. "github.com/devsmd/pkg/utils"
 	"github.com/gorilla/sessions"
 	"golang.org/x/crypto/bcrypt"
 )
 
 const (
-	userDataSession   = "user-data-session"
+	userDataSession   = "user-session"
 	userLoginAction   = "login"
 	userDefaultAction = ""
 )
@@ -33,17 +33,41 @@ type response struct {
 	Token    string `json:"token"`
 }
 
-func Login(w http.ResponseWriter, r *http.Request) {
+func prepareUser(r *http.Request, user *User) (*User, error) {
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		ERROR(w, http.StatusUnprocessableEntity, err)
-		return
+		return user, err
 	}
 
-	var user User
 	err = json.Unmarshal(body, &user)
 	if err != nil {
-		ERROR(w, http.StatusUnprocessableEntity, err)
+		return user, err
+	}
+	return user, err
+}
+
+func saveToken(token string, userID uint32) error {
+	tk := Token{Token: token}
+	tk.Prepare()
+	tk.UserID = userID
+	_, err := tk.CreateOrUpdate(userID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func setUserSession(w http.ResponseWriter, r *http.Request, authenticated bool, userID uint32) {
+	session, _ := store.Get(r, userDataSession)
+	session.Values["authenticated"] = authenticated
+	session.Values["userID"] = userID
+	session.Save(r, w)
+}
+
+func Login(w http.ResponseWriter, r *http.Request) {
+	user, err := prepareUser(r, &User{})
+	if err != nil {
+		ERROR(w, http.StatusUnprocessableEntity, errors.New(http.StatusText(http.StatusUnprocessableEntity)))
 		return
 	}
 
@@ -57,19 +81,25 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	password := user.Password
 	receivedUser, err := user.FindByEmail()
 	if err != nil {
-		ERROR(w, http.StatusNotFound, errors.New("User Not Found"))
+		ERROR(w, http.StatusNotFound, errors.New(http.StatusText(http.StatusNotFound)))
 		return
 	}
 
 	err = VerifyPassword(receivedUser.Password, password)
 	if err != nil {
-		ERROR(w, http.StatusBadRequest, errors.New("Wrong data"))
+		ERROR(w, http.StatusBadRequest, errors.New(http.StatusText(http.StatusBadRequest)))
 		return
 	}
 
 	token, err := CreateToken(receivedUser.ID)
 	if err != nil && err == bcrypt.ErrMismatchedHashAndPassword {
-		ERROR(w, http.StatusUnprocessableEntity, err)
+		ERROR(w, http.StatusUnprocessableEntity, errors.New(http.StatusText(http.StatusUnprocessableEntity)))
+		return
+	}
+
+	err = saveToken(token, receivedUser.ID)
+	if err != nil {
+		ERROR(w, http.StatusUnprocessableEntity, errors.New(http.StatusText(http.StatusUnprocessableEntity)))
 		return
 	}
 
@@ -80,49 +110,40 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		Token:    token,
 	}
 
-	session, _ := store.Get(r, userDataSession)
-	session.Values["authenticated"] = true
-	session.Values["userID"] = receivedUser.ID
-	session.Save(r, w)
+	setUserSession(w, r, true, receivedUser.ID)
 
 	JSON(w, http.StatusOK, res)
 }
 
 func Register(w http.ResponseWriter, r *http.Request) {
-	body, err := ioutil.ReadAll(r.Body)
+	user, err := prepareUser(r, &User{})
 	if err != nil {
-		ERROR(w, http.StatusUnprocessableEntity, err)
-		return
-	}
-
-	var user User
-	err = json.Unmarshal(body, &user)
-	if err != nil {
-		ERROR(w, http.StatusUnprocessableEntity, err)
+		ERROR(w, http.StatusUnprocessableEntity, errors.New(http.StatusText(http.StatusUnprocessableEntity)))
 		return
 	}
 
 	user.Prepare()
 	err = user.Validate(userDefaultAction)
 	if err != nil {
-		ERROR(w, http.StatusBadRequest, err)
+		ERROR(w, http.StatusBadRequest, errors.New(http.StatusText(http.StatusBadRequest)))
 		return
 	}
 
 	createdUser, err := user.Create()
 	if err != nil {
-		ERROR(w, http.StatusInternalServerError, err)
+		ERROR(w, http.StatusConflict, errors.New(http.StatusText(http.StatusConflict)))
 		return
 	}
 
-	session, _ := store.Get(r, userDataSession)
-	session.Values["authenticated"] = true
-	session.Values["userID"] = createdUser.ID
-	session.Save(r, w)
-
 	token, err := CreateToken(createdUser.ID)
 	if err != nil {
-		ERROR(w, http.StatusUnprocessableEntity, err)
+		ERROR(w, http.StatusUnprocessableEntity, errors.New(http.StatusText(http.StatusUnprocessableEntity)))
+		return
+	}
+
+	err = saveToken(token, createdUser.ID)
+	if err != nil {
+		ERROR(w, http.StatusUnprocessableEntity, errors.New(http.StatusText(http.StatusUnprocessableEntity)))
 		return
 	}
 
@@ -133,16 +154,13 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		Token:    token,
 	}
 
+	setUserSession(w, r, true, createdUser.ID)
+
 	w.Header().Set("Location", fmt.Sprintf("%s%s/%d", r.Host, r.RequestURI, createdUser.ID))
 	JSON(w, http.StatusCreated, res)
 }
 
 func Logout(w http.ResponseWriter, r *http.Request) {
-
-	session, _ := store.Get(r, userDataSession)
-	session.Values["authenticated"] = false
-	session.Values["userID"] = nil
-	session.Save(r, w)
-
+	setUserSession(w, r, false, 0)
 	JSON(w, http.StatusOK, nil)
 }

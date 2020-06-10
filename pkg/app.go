@@ -6,7 +6,8 @@ import (
 	"net/http"
 	"os"
 
-	_ "github.com/devsmd/pkg/models"
+	_ "github.com/devsmd/pkg/db"
+	_ "github.com/devsmd/pkg/db/migrations"
 	. "github.com/devsmd/pkg/routes"
 	. "github.com/gorilla/handlers"
 )
