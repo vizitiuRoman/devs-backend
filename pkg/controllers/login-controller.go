@@ -47,9 +47,8 @@ func prepareUser(r *http.Request, user *User) (*User, error) {
 }
 
 func saveToken(token string, userID uint32) error {
-	tk := Token{Token: token}
+	tk := Token{Token: token, UserID: userID}
 	tk.Prepare()
-	tk.UserID = userID
 	_, err := tk.CreateOrUpdate(userID)
 	if err != nil {
 		return err
