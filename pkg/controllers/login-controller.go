@@ -33,6 +33,8 @@ type response struct {
 	Token    string `json:"token"`
 }
 
+// Private func
+
 func prepareUser(r *http.Request, user *User) (*User, error) {
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -56,12 +58,13 @@ func saveToken(token string, userID uint32) error {
 	return nil
 }
 
-func setUserSession(w http.ResponseWriter, r *http.Request, authenticated bool, userID uint32) {
-	session, _ := store.Get(r, userDataSession)
+func setUserSession(session *sessions.Session, w http.ResponseWriter, r *http.Request, authenticated bool, userID uint32) {
 	session.Values["authenticated"] = authenticated
 	session.Values["userID"] = userID
 	session.Save(r, w)
 }
+
+// Public func
 
 func Login(w http.ResponseWriter, r *http.Request) {
 	user, err := prepareUser(r, &User{})
@@ -102,16 +105,15 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res := response{
+	session, _ := store.Get(r, userDataSession)
+	setUserSession(session, w, r, true, receivedUser.ID)
+
+	JSON(w, http.StatusOK, response{
 		UserID:   receivedUser.ID,
 		Name:     receivedUser.Name,
 		LastName: receivedUser.LastName,
 		Token:    token,
-	}
-
-	setUserSession(w, r, true, receivedUser.ID)
-
-	JSON(w, http.StatusOK, res)
+	})
 }
 
 func Register(w http.ResponseWriter, r *http.Request) {
@@ -146,20 +148,36 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res := response{
+	session, _ := store.Get(r, userDataSession)
+	setUserSession(session, w, r, true, createdUser.ID)
+
+	w.Header().Set("Location", fmt.Sprintf("%s%s/%d", r.Host, r.RequestURI, createdUser.ID))
+	JSON(w, http.StatusCreated, response{
 		UserID:   createdUser.ID,
 		Name:     createdUser.Name,
 		LastName: createdUser.LastName,
 		Token:    token,
-	}
-
-	setUserSession(w, r, true, createdUser.ID)
-
-	w.Header().Set("Location", fmt.Sprintf("%s%s/%d", r.Host, r.RequestURI, createdUser.ID))
-	JSON(w, http.StatusCreated, res)
+	})
 }
 
 func Logout(w http.ResponseWriter, r *http.Request) {
-	setUserSession(w, r, false, 0)
-	JSON(w, http.StatusOK, nil)
+	session, _ := store.Get(r, userDataSession)
+	userID := session.Values["userID"]
+
+	encoded, err := EncodeToken(r)
+	if err != nil || encoded != userID {
+		ERROR(w, http.StatusInternalServerError, errors.New(http.StatusText(http.StatusInternalServerError)))
+		return
+	}
+
+	var token Token
+	_, err = token.DeleteById(userID.(uint32))
+	if err != nil {
+		ERROR(w, http.StatusInternalServerError, errors.New(http.StatusText(http.StatusInternalServerError)))
+		return
+	}
+
+	setUserSession(session, w, r, false, 0)
+
+	JSON(w, http.StatusOK, true)
 }

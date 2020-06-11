@@ -16,8 +16,8 @@ type TokenModel interface {
 
 type Token struct {
 	ID        uint32    `gorm:"not nul;auto_increment" json:"id"`
-	UserID    uint32    `gorm:"" json:"user_id"`
-	Token     string    `gorm:"size:255";json:"token"`
+	UserID    uint32    `gorm:"unique" json:"user_id"`
+	Token     string    `gorm:"size:255" json:"token"`
 	CreatedAt time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
 	UpdateAt  time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"update_at"`
 }
@@ -26,7 +26,6 @@ type Token struct {
 
 func (token *Token) Prepare() {
 	token.ID = 0
-	token.UserID = 0
 	token.Token = html.EscapeString(strings.TrimSpace(token.Token))
 	token.CreatedAt = time.Now()
 	token.UpdateAt = time.Now()

@@ -20,7 +20,7 @@ func InitRoutes() (*mux.Router, CORSOption, CORSOption, CORSOption) {
 	// Auth Router
 	router.HandleFunc("/login", MiddlewareJSON(Login)).Methods("POST")
 	router.HandleFunc("/register", MiddlewareJSON(Register)).Methods("POST")
-	router.HandleFunc("/logout", MiddlewareJSON(Logout)).Methods("GET")
+	router.HandleFunc("/logout", MiddlewareJSON(Logout)).Methods("POST")
 
 	// User Router
 	router.HandleFunc("/api/user/delete", MiddlewareAUTH(DeleteUser)).Methods("DELETE")
