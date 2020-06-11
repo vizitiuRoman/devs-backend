@@ -8,7 +8,6 @@ import (
 
 	"github.com/badoux/checkmail"
 	. "github.com/devsmd/pkg/db"
-	"github.com/jinzhu/gorm"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -128,17 +127,11 @@ func (user *User) UpdateById() (*User, error) {
 }
 
 func (user *User) DeleteById(userID uint32) error {
-	return DB.Debug().Transaction(func(tx *gorm.DB) error {
-		err := tx.Debug().Model(&User{}).Where("id = ?", userID).Take(&user).Delete(&user).Error
-		if err != nil {
-			return err
-		}
-		err = tx.Debug().Model(&Token{}).Where("user_id = ?", userID).Take(&Token{}).Delete(&Token{}).Error
-		if err != nil {
-			return err
-		}
-		return nil
-	})
+	err := DB.Debug().Model(&User{}).Where("id = ?", userID).Take(&user).Delete(&user).Error
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (user *User) FindById() (*User, error) {

@@ -45,17 +45,8 @@ func prepareUser(r *http.Request, user *User) (*User, error) {
 	if err != nil {
 		return user, err
 	}
+	user.Prepare()
 	return user, err
-}
-
-func saveToken(token string, userID uint32) error {
-	tk := Token{Token: token, UserID: userID}
-	tk.Prepare()
-	_, err := tk.CreateOrUpdate(userID)
-	if err != nil {
-		return err
-	}
-	return nil
 }
 
 func setUserSession(session *sessions.Session, w http.ResponseWriter, r *http.Request, authenticated bool, userID uint32) {
@@ -73,7 +64,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user.Prepare()
 	err = user.Validate(userLoginAction)
 	if err != nil {
 		ERROR(w, http.StatusBadRequest, errors.New(http.StatusText(http.StatusBadRequest)))
@@ -99,12 +89,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = saveToken(token, receivedUser.ID)
-	if err != nil {
-		ERROR(w, http.StatusUnprocessableEntity, errors.New(http.StatusText(http.StatusUnprocessableEntity)))
-		return
-	}
-
 	session, _ := store.Get(r, userDataSession)
 	setUserSession(session, w, r, true, receivedUser.ID)
 
@@ -123,7 +107,6 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user.Prepare()
 	err = user.Validate(userDefaultAction)
 	if err != nil {
 		ERROR(w, http.StatusBadRequest, errors.New(http.StatusText(http.StatusBadRequest)))
@@ -137,12 +120,6 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	token, err := CreateToken(createdUser.ID)
-	if err != nil {
-		ERROR(w, http.StatusUnprocessableEntity, errors.New(http.StatusText(http.StatusUnprocessableEntity)))
-		return
-	}
-
-	err = saveToken(token, createdUser.ID)
 	if err != nil {
 		ERROR(w, http.StatusUnprocessableEntity, errors.New(http.StatusText(http.StatusUnprocessableEntity)))
 		return
@@ -166,13 +143,6 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 
 	encoded, err := EncodeToken(r)
 	if err != nil || encoded != userID {
-		ERROR(w, http.StatusInternalServerError, errors.New(http.StatusText(http.StatusInternalServerError)))
-		return
-	}
-
-	var token Token
-	_, err = token.DeleteById(userID.(uint32))
-	if err != nil {
 		ERROR(w, http.StatusInternalServerError, errors.New(http.StatusText(http.StatusInternalServerError)))
 		return
 	}

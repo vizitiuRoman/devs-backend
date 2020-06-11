@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	. "github.com/devsmd/pkg/auth"
-	. "github.com/devsmd/pkg/db/models"
 	. "github.com/devsmd/pkg/utils"
 )
 
@@ -23,20 +22,6 @@ func MiddlewareAUTH(next http.HandlerFunc) http.HandlerFunc {
 			ERROR(w, http.StatusUnauthorized, errors.New(http.StatusText(http.StatusUnauthorized)))
 			return
 		}
-
-		token := ExtractToken(r)
-		if token == "" {
-			ERROR(w, http.StatusUnauthorized, errors.New(http.StatusText(http.StatusUnauthorized)))
-			return
-		}
-
-		var tokenAuth Token
-		_, err = tokenAuth.GetByToken(token)
-		if err != nil {
-			ERROR(w, http.StatusUnauthorized, errors.New(http.StatusText(http.StatusUnauthorized)))
-			return
-		}
-
 		w.Header().Set("Content-Type", "application/json")
 		next(w, r)
 	}

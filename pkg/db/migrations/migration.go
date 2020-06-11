@@ -6,5 +6,5 @@ import (
 )
 
 func init() {
-	DB.AutoMigrate(&User{}, Token{})
+	DB.AutoMigrate(&User{})
 }
