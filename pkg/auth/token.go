@@ -13,21 +13,7 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 )
 
-// Private Func
-
-func extractToken(r *http.Request) string {
-	keys := r.URL.Query()
-	token := keys.Get("token")
-	if token != "" {
-		return token
-	}
-
-	bearerToken := r.Header.Get("Authorization")
-	if len(strings.Split(bearerToken, " ")) == 2 {
-		return strings.Split(bearerToken, " ")[1]
-	}
-	return ""
-}
+// Private func
 
 func pretty(data interface{}) {
 	_, err := json.MarshalIndent(data, "", " ")
@@ -50,7 +36,21 @@ func prepareToken(extractedToken string) (*jwt.Token, error) {
 	return token, nil
 }
 
-// Public Func
+// Public func
+
+func ExtractToken(r *http.Request) string {
+	keys := r.URL.Query()
+	token := keys.Get("token")
+	if token != "" {
+		return token
+	}
+
+	bearerToken := r.Header.Get("Authorization")
+	if len(strings.Split(bearerToken, " ")) == 2 {
+		return strings.Split(bearerToken, " ")[1]
+	}
+	return ""
+}
 
 func CreateToken(userID uint32) (string, error) {
 	claims := jwt.MapClaims{}
@@ -62,7 +62,7 @@ func CreateToken(userID uint32) (string, error) {
 }
 
 func TokenValid(r *http.Request) error {
-	extractedToken := extractToken(r)
+	extractedToken := ExtractToken(r)
 	token, err := prepareToken(extractedToken)
 	if err != nil {
 		return err
@@ -75,18 +75,18 @@ func TokenValid(r *http.Request) error {
 }
 
 func EncodeToken(r *http.Request) (uint32, error) {
-	extractedToken := extractToken(r)
+	extractedToken := ExtractToken(r)
 	token, err := prepareToken(extractedToken)
 	if err != nil {
 		return 0, nil
 	}
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		uid, err := strconv.ParseUint(fmt.Sprintf("%.0f", claims["userID"]), 10, 32)
+		userID, err := strconv.ParseUint(fmt.Sprintf("%.0f", claims["userID"]), 10, 32)
 		if err != nil {
 			return 0, err
 		}
-		return uint32(uid), nil
+		return uint32(userID), nil
 	}
 	return 0, nil
 }

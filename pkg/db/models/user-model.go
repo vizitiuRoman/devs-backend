@@ -8,6 +8,7 @@ import (
 
 	"github.com/badoux/checkmail"
 	. "github.com/devsmd/pkg/db"
+	"github.com/jinzhu/gorm"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -17,7 +18,7 @@ type UserModel interface {
 	Validate(action string) error
 	Create() (*User, error)
 	UpdateById() (*User, error)
-	DeleteById(userID uint32) (*User, error)
+	DeleteById(userID uint32) error
 	FindById() (*User, error)
 	FindByEmail() (*User, error)
 	FindAll() (*[]User, error)
@@ -126,12 +127,18 @@ func (user *User) UpdateById() (*User, error) {
 	return user, nil
 }
 
-func (user *User) DeleteById(userID uint32) (int64, error) {
-	err := DB.Debug().Model(&User{}).Where("id = ?", userID).Take(&user).Delete(&user)
-	if err != nil {
-		return 0, err.Error
-	}
-	return err.RowsAffected, nil
+func (user *User) DeleteById(userID uint32) error {
+	return DB.Debug().Transaction(func(tx *gorm.DB) error {
+		err := tx.Debug().Model(&User{}).Where("id = ?", userID).Take(&user).Delete(&user).Error
+		if err != nil {
+			return err
+		}
+		err = tx.Debug().Model(&Token{}).Where("user_id = ?", userID).Take(&Token{}).Delete(&Token{}).Error
+		if err != nil {
+			return err
+		}
+		return nil
+	})
 }
 
 func (user *User) FindById() (*User, error) {

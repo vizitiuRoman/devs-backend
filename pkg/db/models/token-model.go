@@ -12,6 +12,7 @@ type TokenModel interface {
 	Prepare()
 	CreateOrUpdate(userID uint32) (*Token, error)
 	DeleteById(userID uint32) (int64, error)
+	GetByToken(tokenAuth string) (*Token, error)
 }
 
 type Token struct {
@@ -52,4 +53,12 @@ func (token *Token) DeleteById(userID uint32) (int64, error) {
 		return 0, err.Error
 	}
 	return err.RowsAffected, nil
+}
+
+func (token *Token) GetByToken(tokenAuth string) (*Token, error) {
+	err := DB.Debug().Model(&Token{}).Where("token = ?", tokenAuth).Take(&token).Error
+	if err != nil {
+		return &Token{}, err
+	}
+	return token, nil
 }

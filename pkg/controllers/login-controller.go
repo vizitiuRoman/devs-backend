@@ -76,7 +76,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	user.Prepare()
 	err = user.Validate(userLoginAction)
 	if err != nil {
-		ERROR(w, http.StatusBadRequest, err)
+		ERROR(w, http.StatusBadRequest, errors.New(http.StatusText(http.StatusBadRequest)))
 		return
 	}
 

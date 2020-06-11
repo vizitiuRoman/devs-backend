@@ -21,16 +21,9 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var user User
-	_, err = user.DeleteById(userID.(uint32))
+	err = user.DeleteById(userID.(uint32))
 	if err != nil {
-		ERROR(w, http.StatusInternalServerError, err)
-		return
-	}
-
-	var token Token
-	_, err = token.DeleteById(userID.(uint32))
-	if err != nil {
-		ERROR(w, http.StatusInternalServerError, err)
+		ERROR(w, http.StatusInternalServerError, errors.New(http.StatusText(http.StatusInternalServerError)))
 		return
 	}
 
