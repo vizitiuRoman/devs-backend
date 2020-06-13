@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: postgres-secret
+type: Opaque
+stringData:  # We dont need to worry about converting to base64
+  POSTGRES_USER: devsmd-user-service
+  POSTGRES_PASSWORD: devsmd-user-service
+  POSTGRES_DB: devsmd-user-service
+
+  DB_HOST: devsmd-user-service
+  DB_DRIVER: postgres
+  API_SECRET: 41bo5102u
+  DB_USER: devsmd-user-service
+  DB_PASSWORD: devsmd-user-service
+  DB_NAME: devsmd-user-service
+  DB_PORT: "5432"
