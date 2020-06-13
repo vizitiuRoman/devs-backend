@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"os"
 
 	. "github.com/devs-backend/user-service/pkg/auth"
 	. "github.com/devs-backend/user-service/pkg/models"
@@ -18,8 +17,6 @@ const (
 	userLoginAction   = "login"
 	userDefaultAction = ""
 )
-
-var key = []byte(os.Getenv("SESSION_KEY"))
 
 type response struct {
 	UserID   uint32 `json:"userId"`
