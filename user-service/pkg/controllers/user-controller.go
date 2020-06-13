@@ -117,10 +117,17 @@ func Register(w http.ResponseWriter, r *http.Request) {
 }
 
 func Logout(w http.ResponseWriter, r *http.Request) {
-	_, err := EncodeToken(r)
+	extractedToken, err := ExtractTokenMetadata(r)
 	if err != nil {
 		ERROR(w, http.StatusInternalServerError, errors.New(http.StatusText(http.StatusInternalServerError)))
 		return
 	}
+
+	token := TokenDetails{
+		AccessUUID:  extractedToken.AccessUUID,
+		RefreshUUID: extractedToken.RefreshUUID,
+	}
+	err = token.DeleteByUUID()
+
 	JSON(w, http.StatusOK, true)
 }
