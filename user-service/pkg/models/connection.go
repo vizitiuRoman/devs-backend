@@ -5,12 +5,16 @@ import (
 	"log"
 	"os"
 
+	"github.com/go-redis/redis/v7"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/joho/godotenv"
 )
 
-var db *gorm.DB
+var (
+	db     *gorm.DB
+	Client *redis.Client
+)
 
 func init() {
 	err := godotenv.Load()
@@ -20,24 +24,40 @@ func init() {
 		fmt.Println("Load env")
 	}
 
-	connect(os.Getenv("DB_DRIVER"), os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"),
+	connectREDIS()
+	connectPG(os.Getenv("DB_DRIVER"), os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"),
 		os.Getenv("DB_PORT"), os.Getenv("DB_HOST"), os.Getenv("DB_NAME"),
 	)
 
 	db.AutoMigrate(&User{})
 }
 
-func connect(DbDriver, DbUser, DbPassword, DbPort, DbHost, DbName string) {
+func connectPG(DbDriver, DbUser, DbPassword, DbPort, DbHost, DbName string) {
 	DBURL := fmt.Sprintf("host=%s port=%s user=%s dbname=%s sslmode=disable password=%s",
 		DbHost, DbPort, DbUser, DbName, DbPassword,
 	)
 
 	database, err := gorm.Open(DbDriver, DBURL)
 	if err != nil {
-		fmt.Println("Can't connect to", DbName)
+		fmt.Println("Postgres can't connect to", DbName)
 		log.Fatal("Error", err)
 	} else {
 		fmt.Println("Connect to", DbName)
 	}
 	db = database
+}
+
+func connectREDIS() {
+	dsn := os.Getenv("REDIS_DSN")
+	if len(dsn) == 0 {
+		dsn = "localhost:6379"
+	}
+	Client = redis.NewClient(&redis.Options{
+		Addr: dsn,
+	})
+	_, err := Client.Ping().Result()
+	if err != nil {
+		fmt.Println("Redis can't connect to", dsn)
+		log.Fatal("Error", err)
+	}
 }
