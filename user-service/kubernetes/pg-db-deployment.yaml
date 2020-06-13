@@ -22,7 +22,7 @@ spec:
           imagePullPolicy: "IfNotPresent"
           envFrom:                                # Get the environmental variables from a secret file whose name is "postgres-secret"
             - secretRef:
-                name: postgres-secret
+                name: pg-secret
 
           ports:
             - containerPort: 5432                   # The port that the container exposes
@@ -33,4 +33,4 @@ spec:
       volumes:                                      # A PersistentVolume is mounted as a volume to the Pod
         - name: postgres-persistent-storage
           persistentVolumeClaim:
-            claimName: postgres-pv-claim
+            claimName: pg-pv-claim
