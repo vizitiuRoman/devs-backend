@@ -41,9 +41,8 @@ func connectPG(DbDriver, DbUser, DbPassword, DbPort, DbHost, DbName string) {
 	if err != nil {
 		fmt.Println("Postgres can't connect to", DbName)
 		log.Fatal("Error", err)
-	} else {
-		fmt.Println("Postgres connect to", DbName)
 	}
+	fmt.Println("Postgres connect to", DbName)
 	db = database
 }
 
@@ -59,7 +58,6 @@ func connectREDIS() {
 	if err != nil {
 		fmt.Println("Redis can't connect to", host+":"+port)
 		log.Fatal("Error", err)
-	} else {
-		fmt.Println("Redis connect to", host+":"+port)
 	}
+	fmt.Println("Redis connect to", host+":"+port)
 }

@@ -1,3 +1,9 @@
+// Apply folder
+
+kubectl apply -f kubernetes/
+
+// Apply single
+
 kubectl create -f user-service-secret.yaml
 
 kubectl get secrets
