@@ -1,7 +1,6 @@
 package routes
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -17,7 +16,7 @@ func InitRoutes() *mux.Router {
 	router.HandleFunc("/register", MiddlewareJSON(Register)).Methods("POST")
 	router.HandleFunc("/logout", MiddlewareJSON(Logout)).Methods("POST")
 	router.HandleFunc("/home", MiddlewareAUTH(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("OK")
+
 	}))
 
 	return router
