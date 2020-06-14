@@ -1,10 +1,8 @@
 package auth
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"strconv"
@@ -12,24 +10,18 @@ import (
 	"time"
 
 	. "github.com/devs-backend/user-service/pkg/models"
+	. "github.com/devs-backend/user-service/pkg/utils"
 	jwt "github.com/dgrijalva/jwt-go"
 	. "github.com/twinj/uuid"
 )
 
 type AccessDetails struct {
-	AccessUUID string
-	UserID     uint64
+	AccessUUID  string
+	RefreshUUID string
+	UserID      uint64
 }
 
 // Private func
-
-func pretty(data interface{}) {
-	_, err := json.MarshalIndent(data, "", " ")
-	if err != nil {
-		log.Println(err)
-		return
-	}
-}
 
 func prepareToken(extractedToken string) (*jwt.Token, error) {
 	token, err := jwt.Parse(extractedToken, func(token *jwt.Token) (interface{}, error) {
@@ -64,11 +56,11 @@ func CreateToken(userID uint32) (string, error) {
 	accessUUID := NewV4().String()
 	refreshUUID := NewV4().String()
 	claims := jwt.MapClaims{}
-	claims["authorized"] = true
-	claims["userID"] = userID
-	claims["accessUUID"] = accessUUID
-	claims["refreshUUID"] = refreshUUID
-	claims["exp"] = time.Now().Add(time.Hour * 12).Unix()
+	claims[Authorized] = true
+	claims[UserID] = userID
+	claims[AccessUUID] = accessUUID
+	claims[RefreshUUID] = refreshUUID
+	claims["exp"] = time.Now().Add(TokenExpires).Unix()
 	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(os.Getenv("API_SECRET")))
 	if err != nil {
 		return "", err
@@ -78,8 +70,8 @@ func CreateToken(userID uint32) (string, error) {
 		AccessToken: token,
 		AccessUUID:  accessUUID,
 		RefreshUUID: refreshUUID,
-		AtExpires:   time.Now().Add(time.Hour * 12).Unix(),
-		RtExpires:   time.Now().Add(time.Hour * 24 * 7).Unix(),
+		AtExpires:   time.Now().Add(AtExpires).Unix(),
+		RtExpires:   time.Now().Add(RtExpires).Unix(),
 	}
 	err = tokenDetails.Create(userID)
 	if err != nil {
@@ -88,23 +80,10 @@ func CreateToken(userID uint32) (string, error) {
 	return token, nil
 }
 
-func TokenValid(r *http.Request) error {
-	extractedToken := extractToken(r)
-	token, err := prepareToken(extractedToken)
-	if err != nil {
-		return err
-	}
-
-	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		pretty(claims)
-	}
-	return nil
-}
-
-func EncodeToken(r *http.Request) (*AccessDetails, error) {
+func ExtractTokenMetadata(r *http.Request) (*AccessDetails, error) {
 	extractedToken := extractToken(r)
 	if extractedToken == "" {
-		return &AccessDetails{}, errors.New("Extract token")
+		return &AccessDetails{}, errors.New("Can't extract token")
 	}
 
 	token, err := prepareToken(extractedToken)
@@ -113,7 +92,11 @@ func EncodeToken(r *http.Request) (*AccessDetails, error) {
 	}
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		accessUuid, ok := claims["accessUUID"].(string)
+		accessUUID, ok := claims[AccessUUID].(string)
+		if !ok {
+			return &AccessDetails{}, err
+		}
+		refreshUUID, ok := claims[RefreshUUID].(string)
 		if !ok {
 			return &AccessDetails{}, err
 		}
@@ -122,21 +105,19 @@ func EncodeToken(r *http.Request) (*AccessDetails, error) {
 			return &AccessDetails{}, err
 		}
 		return &AccessDetails{
-			AccessUUID: accessUuid,
-			UserID:     userID,
+			AccessUUID:  accessUUID,
+			RefreshUUID: refreshUUID,
+			UserID:      userID,
 		}, nil
 	}
-	return &AccessDetails{}, errors.New("Extract token")
+	return &AccessDetails{}, errors.New("Extract token error")
 }
 
-func GetToken(accessD *AccessDetails) (uint64, error) {
-	userid, err := Client.Get(accessD.AccessUUID).Result()
+func FetchToken(accessDT *AccessDetails) (uint64, error) {
+	token := TokenDetails{AccessUUID: accessDT.AccessUUID}
+	userID, err := token.GetByUUID(accessDT.UserID)
 	if err != nil {
 		return 0, err
-	}
-	userID, _ := strconv.ParseUint(userid, 10, 64)
-	if accessD.UserID != userID {
-		return 0, errors.New("unauthorized")
 	}
 	return userID, nil
 }

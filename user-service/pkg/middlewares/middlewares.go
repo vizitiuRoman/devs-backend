@@ -2,7 +2,6 @@ package middlewares
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 
 	. "github.com/devs-backend/user-service/pkg/auth"
@@ -19,13 +18,13 @@ func MiddlewareJSON(next http.HandlerFunc) http.HandlerFunc {
 func MiddlewareAUTH(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		token, err := EncodeToken(r)
+		token, err := ExtractTokenMetadata(r)
 		if err != nil {
 			ERROR(w, http.StatusUnauthorized, errors.New(http.StatusText(http.StatusUnauthorized)))
 			return
 		}
 
-		_, err = GetToken(&AccessDetails{
+		_, err = FetchToken(&AccessDetails{
 			AccessUUID: token.AccessUUID,
 			UserID:     token.UserID,
 		})
@@ -33,9 +32,6 @@ func MiddlewareAUTH(next http.HandlerFunc) http.HandlerFunc {
 			ERROR(w, http.StatusUnauthorized, errors.New(http.StatusText(http.StatusUnauthorized)))
 			return
 		}
-
-		fmt.Println("Q")
-
 		next(w, r)
 	}
 }
