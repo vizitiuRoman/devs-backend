@@ -1,4 +1,4 @@
-kubectl create -f secret.yaml
+kubectl create -f user-service-secret.yaml
 
 kubectl get secrets
 
@@ -18,15 +18,17 @@ kubectl apply -f redis-master-deployment.yaml
 
 kubectl apply -f redis-master-service.yaml
 
-kubectl apply -f redis-slave-deployment.yaml
-
-kubectl apply -f redis-slave-service.yaml
-
 // delete 
 
 kubectl delete deployment -l app=devsmd-user-service
 
 kubectl delete services -l app=devsmd-user-service
+
+kubectl delete deployment --all
+
+kubectl delete secrets --all
+
+kubectl delete services --all
 
 // restart 
 

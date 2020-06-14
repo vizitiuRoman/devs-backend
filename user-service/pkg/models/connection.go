@@ -42,22 +42,24 @@ func connectPG(DbDriver, DbUser, DbPassword, DbPort, DbHost, DbName string) {
 		fmt.Println("Postgres can't connect to", DbName)
 		log.Fatal("Error", err)
 	} else {
-		fmt.Println("Connect to", DbName)
+		fmt.Println("Postgres connect to", DbName)
 	}
 	db = database
 }
 
 func connectREDIS() {
-	dsn := os.Getenv("REDIS_DSN")
-	if len(dsn) == 0 {
-		dsn = "localhost:6379"
+	host, port := os.Getenv("REDIS_HOST"), os.Getenv("REDIS_PORT")
+	if len(host) == 0 && len(port) == 0 {
+		host, port = "127.0.0.1", "6379"
 	}
 	Client = redis.NewClient(&redis.Options{
-		Addr: dsn,
+		Addr: host + ":" + port,
 	})
 	_, err := Client.Ping().Result()
 	if err != nil {
-		fmt.Println("Redis can't connect to", dsn)
+		fmt.Println("Redis can't connect to", host+":"+port)
 		log.Fatal("Error", err)
+	} else {
+		fmt.Println("Redis connect to", host+":"+port)
 	}
 }
