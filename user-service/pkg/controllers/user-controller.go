@@ -30,7 +30,6 @@ func prepareUser(r *http.Request, user *User) (*User, error) {
 	if err != nil {
 		return user, err
 	}
-
 	err = json.Unmarshal(body, &user)
 	if err != nil {
 		return user, err
@@ -61,7 +60,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	err = VerifyPassword(receivedUser.Password, password)
 	if err != nil {
-		ERROR(w, http.StatusBadRequest, errors.New(http.StatusText(http.StatusBadRequest)))
+		ERROR(w, http.StatusUnauthorized, errors.New(http.StatusText(http.StatusUnauthorized)))
 		return
 	}
 
@@ -88,7 +87,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 
 	err = user.Validate(userDefaultAction)
 	if err != nil {
-		ERROR(w, http.StatusUnauthorized, errors.New(http.StatusText(http.StatusUnauthorized)))
+		ERROR(w, http.StatusBadRequest, err)
 		return
 	}
 

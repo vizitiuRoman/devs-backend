@@ -59,27 +59,27 @@ func (user *User) Validate(action string) error {
 	switch strings.ToLower(action) {
 	case "login":
 		if user.Email == "" {
-			return errors.New("Required email")
+			return errors.New("Required Email")
 		}
 		if user.Password == "" {
-			return errors.New("Required password")
+			return errors.New("Required Password")
 		}
 		if err := checkmail.ValidateFormat(user.Email); err != nil {
-			return errors.New("Invalid email")
+			return errors.New("Invalid Email")
 		}
 		return nil
 	default:
 		if user.Email == "" {
-			return errors.New("Required email")
+			return errors.New("Required Email")
 		}
 		if user.Name == "" {
-			return errors.New("Required name")
+			return errors.New("Required Name")
 		}
 		if user.LastName == "" {
-			return errors.New("Required lastName")
+			return errors.New("Required Last Name")
 		}
 		if user.Password == "" {
-			return errors.New("Required password")
+			return errors.New("Required Password")
 		}
 		if err := checkmail.ValidateFormat(user.Email); err != nil {
 			return errors.New("Invalid Email")
