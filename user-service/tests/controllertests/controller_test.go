@@ -13,8 +13,6 @@ import (
 	"github.com/joho/godotenv"
 )
 
-var db *gorm.DB
-
 func TestMain(m *testing.M) {
 	err := godotenv.Load(os.ExpandEnv("../../.env"))
 	if err != nil {
@@ -30,17 +28,15 @@ func TestMain(m *testing.M) {
 }
 
 func connectPG(DBDriver, DBUser, DBPassword, DBPort, DBHost, DBName string) {
-	DBURL := fmt.Sprintf("host=%s port=%s user=%s dbname=%s sslmode=disable password=%s",
+	database, err := gorm.Open(DBDriver, fmt.Sprintf("host=%s port=%s user=%s dbname=%s sslmode=disable password=%s",
 		DBHost, DBPort, DBUser, DBName, DBPassword,
-	)
-
-	database, err := gorm.Open(DBDriver, DBURL)
+	))
 	if err != nil {
 		fmt.Println("Postgres can't connect to", DBName)
 		log.Fatal("Error", err)
 	}
 	fmt.Println("Postgres connect to", DBName)
-	db = database
+	DB = database
 }
 
 func connectREDIS() {
@@ -60,11 +56,11 @@ func connectREDIS() {
 }
 
 func refreshUserTable() error {
-	err := db.DropTableIfExists(User{}).Error
+	err := DB.DropTableIfExists(User{}).Error
 	if err != nil {
 		return err
 	}
-	err = db.AutoMigrate(User{}).Error
+	err = DB.AutoMigrate(User{}).Error
 	if err != nil {
 		return err
 	}
@@ -84,7 +80,7 @@ func seedOneUser() (User, error) {
 		Name:     "pet",
 		LastName: "pets",
 	}
-	err = db.Model(&User{}).Create(&user).Error
+	err = DB.Model(&User{}).Create(&user).Error
 	if err != nil {
 		return User{}, err
 	}
@@ -107,7 +103,7 @@ func seedUsers() ([]User, error) {
 		},
 	}
 	for i, _ := range users {
-		err := db.Model(&User{}).Create(&users[i]).Error
+		err := DB.Model(&User{}).Create(&users[i]).Error
 		if err != nil {
 			return []User{}, err
 		}
@@ -116,11 +112,11 @@ func seedUsers() ([]User, error) {
 }
 
 func refreshUserAndPostTable() error {
-	err := db.DropTableIfExists(&User{}).Error
+	err := DB.DropTableIfExists(&User{}).Error
 	if err != nil {
 		return err
 	}
-	err = db.AutoMigrate(&User{}).Error
+	err = DB.AutoMigrate(&User{}).Error
 	if err != nil {
 		return err
 	}

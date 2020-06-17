@@ -24,6 +24,7 @@ func TestRegisterUser(t *testing.T) {
 		name         string
 		email        string
 		lastName     string
+		token        string
 		errorMessage string
 	}{
 		{
@@ -86,8 +87,6 @@ func TestRegisterUser(t *testing.T) {
 		handler := http.HandlerFunc(Register)
 		handler.ServeHTTP(rr, req)
 
-		fmt.Printf("%s", rr.Body)
-
 		responseMap := make(map[string]interface{})
 		err = json.Unmarshal([]byte(rr.Body.String()), &responseMap)
 		if err != nil {
@@ -97,10 +96,10 @@ func TestRegisterUser(t *testing.T) {
 		assert.Equal(t, rr.Code, v.statusCode)
 		if v.statusCode == 201 {
 			assert.Equal(t, responseMap["name"], v.name)
-			assert.Equal(t, responseMap["email"], v.email)
 			assert.Equal(t, responseMap["lastName"], v.lastName)
+			assert.Contains(t, responseMap["token"], v.token)
 		}
-		if v.statusCode == 400 || v.statusCode == 422 || v.statusCode == 500 && v.errorMessage != "" {
+		if v.statusCode == 400 || v.statusCode == 409 || v.statusCode == 422 || v.statusCode == 500 && v.errorMessage != "" {
 			assert.Equal(t, responseMap["error"], v.errorMessage)
 		}
 	}
