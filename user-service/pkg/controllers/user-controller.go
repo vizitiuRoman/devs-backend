@@ -115,7 +115,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 func Logout(w http.ResponseWriter, r *http.Request) {
 	extractedToken, err := ExtractTokenMetadata(r)
 	if err != nil {
-		ERROR(w, http.StatusInternalServerError, errors.New(http.StatusText(http.StatusInternalServerError)))
+		ERROR(w, http.StatusUnprocessableEntity, errors.New(http.StatusText(http.StatusUnprocessableEntity)))
 		return
 	}
 
@@ -124,6 +124,10 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 		RefreshUUID: extractedToken.RefreshUUID,
 	}
 	err = token.DeleteByUUID()
+	if err != nil {
+		ERROR(w, http.StatusUnprocessableEntity, errors.New(http.StatusText(http.StatusUnprocessableEntity)))
+		return
+	}
 
 	JSON(w, http.StatusOK, true)
 }

@@ -125,8 +125,8 @@ func (user *User) UpdateById() (*User, error) {
 	return user, nil
 }
 
-func (user *User) DeleteById(userID uint32) error {
-	err := DB.Debug().Model(&User{}).Where("id = ?", userID).Take(&user).Delete(&user).Error
+func (user *User) DeleteById() error {
+	err := DB.Debug().Model(&User{}).Where("id = ?", user.ID).Take(&user).Delete(&user).Error
 	if err != nil {
 		return err
 	}

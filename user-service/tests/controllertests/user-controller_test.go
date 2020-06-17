@@ -95,9 +95,9 @@ func TestRegisterUser(t *testing.T) {
 
 		assert.Equal(t, rr.Code, v.statusCode)
 		if v.statusCode == 201 {
+			assert.NotEmpty(t, responseMap["token"])
 			assert.Equal(t, responseMap["name"], v.name)
 			assert.Equal(t, responseMap["lastName"], v.lastName)
-			assert.Contains(t, responseMap["token"], v.token)
 		}
 		if v.statusCode == 400 || v.statusCode == 409 || v.statusCode == 422 || v.statusCode == 500 && v.errorMessage != "" {
 			assert.Equal(t, responseMap["error"], v.errorMessage)
