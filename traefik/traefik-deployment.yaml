@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: traefik
+    k8s-app: traefik
     release: traefik
   name: traefik
   namespace: kube-system
@@ -11,12 +11,12 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: traefik
+      k8s-app: traefik
       release: traefik
   template:
     metadata:
       labels:
-        app: traefik
+        k8s-app: traefik
         release: traefik
     spec:
       containers:

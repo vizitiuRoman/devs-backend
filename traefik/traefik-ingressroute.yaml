@@ -10,14 +10,13 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: traefik
+    k8s-app: traefik
     release: traefik
-  name: traefik
+  name: traefik-ingress-service
   namespace: kube-system
 spec:
-  externalIPs:
-    - 10.96.0.1     # {YOUR-CLUSTER-NODE-IP}
-  externalTrafficPolicy: Cluster
+  selector:
+    k8s-app: traefik
   ports:
     - name: web
       nodePort: 31909
@@ -34,9 +33,6 @@ spec:
       port: 8100
       protocol: TCP
       targetPort: 8100
-  selector:
-    app: traefik
-    release: traefik
   sessionAffinity: None
   type: LoadBalancer
 status:
