@@ -30,7 +30,6 @@ func prepareUser(r *http.Request, user *User) (*User, error) {
 	if err != nil {
 		return user, err
 	}
-
 	err = json.Unmarshal(body, &user)
 	if err != nil {
 		return user, err
@@ -61,7 +60,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	err = VerifyPassword(receivedUser.Password, password)
 	if err != nil {
-		ERROR(w, http.StatusBadRequest, errors.New(http.StatusText(http.StatusBadRequest)))
+		ERROR(w, http.StatusUnauthorized, errors.New(http.StatusText(http.StatusUnauthorized)))
 		return
 	}
 
@@ -88,7 +87,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 
 	err = user.Validate(userDefaultAction)
 	if err != nil {
-		ERROR(w, http.StatusUnauthorized, errors.New(http.StatusText(http.StatusUnauthorized)))
+		ERROR(w, http.StatusBadRequest, err)
 		return
 	}
 
@@ -116,7 +115,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 func Logout(w http.ResponseWriter, r *http.Request) {
 	extractedToken, err := ExtractTokenMetadata(r)
 	if err != nil {
-		ERROR(w, http.StatusInternalServerError, errors.New(http.StatusText(http.StatusInternalServerError)))
+		ERROR(w, http.StatusUnprocessableEntity, errors.New(http.StatusText(http.StatusUnprocessableEntity)))
 		return
 	}
 
@@ -125,6 +124,10 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 		RefreshUUID: extractedToken.RefreshUUID,
 	}
 	err = token.DeleteByUUID()
+	if err != nil {
+		ERROR(w, http.StatusUnprocessableEntity, errors.New(http.StatusText(http.StatusUnprocessableEntity)))
+		return
+	}
 
 	JSON(w, http.StatusOK, true)
 }

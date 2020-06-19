@@ -59,27 +59,27 @@ func (user *User) Validate(action string) error {
 	switch strings.ToLower(action) {
 	case "login":
 		if user.Email == "" {
-			return errors.New("Required email")
+			return errors.New("Required Email")
 		}
 		if user.Password == "" {
-			return errors.New("Required password")
+			return errors.New("Required Password")
 		}
 		if err := checkmail.ValidateFormat(user.Email); err != nil {
-			return errors.New("Invalid email")
+			return errors.New("Invalid Email")
 		}
 		return nil
 	default:
 		if user.Email == "" {
-			return errors.New("Required email")
+			return errors.New("Required Email")
 		}
 		if user.Name == "" {
-			return errors.New("Required name")
+			return errors.New("Required Name")
 		}
 		if user.LastName == "" {
-			return errors.New("Required lastName")
+			return errors.New("Required Last Name")
 		}
 		if user.Password == "" {
-			return errors.New("Required password")
+			return errors.New("Required Password")
 		}
 		if err := checkmail.ValidateFormat(user.Email); err != nil {
 			return errors.New("Invalid Email")
@@ -99,7 +99,7 @@ func hashPassword(password string) ([]byte, error) {
 // Query to database
 
 func (user *User) Create() (*User, error) {
-	err := db.Debug().Model(&User{}).Create(&user).Error
+	err := DB.Debug().Model(&User{}).Create(&user).Error
 	if err != nil {
 		return &User{}, err
 	}
@@ -112,7 +112,7 @@ func (user *User) UpdateById() (*User, error) {
 		return &User{}, err
 	}
 
-	err = db.Debug().Model(&User{}).Where("id = ?", user.ID).Update(&User{
+	err = DB.Debug().Model(&User{}).Where("id = ?", user.ID).Update(&User{
 		Email:    user.Email,
 		Password: user.Password,
 		Name:     user.Name,
@@ -125,8 +125,8 @@ func (user *User) UpdateById() (*User, error) {
 	return user, nil
 }
 
-func (user *User) DeleteById(userID uint32) error {
-	err := db.Debug().Model(&User{}).Where("id = ?", userID).Take(&user).Delete(&user).Error
+func (user *User) DeleteById() error {
+	err := DB.Debug().Model(&User{}).Where("id = ?", user.ID).Take(&user).Delete(&user).Error
 	if err != nil {
 		return err
 	}
@@ -134,7 +134,7 @@ func (user *User) DeleteById(userID uint32) error {
 }
 
 func (user *User) FindById() (*User, error) {
-	err := db.Debug().Model(&User{}).Where("id = ?", user.ID).Take(&user).Error
+	err := DB.Debug().Model(&User{}).Where("id = ?", user.ID).Take(&user).Error
 	if err != nil {
 		return &User{}, err
 	}
@@ -142,7 +142,7 @@ func (user *User) FindById() (*User, error) {
 }
 
 func (user *User) FindByEmail() (*User, error) {
-	err := db.Debug().Model(&User{}).Where("email = ?", user.Email).Take(&user).Error
+	err := DB.Debug().Model(&User{}).Where("email = ?", user.Email).Take(&user).Error
 	if err != nil {
 		return &User{}, err
 	}
@@ -151,7 +151,7 @@ func (user *User) FindByEmail() (*User, error) {
 
 func (user *User) FindAll() (*[]User, error) {
 	var users []User
-	err := db.Debug().Model(&[]User{}).Limit(100).Find(users).Error
+	err := DB.Debug().Model(&[]User{}).Limit(100).Find(users).Error
 	if err != nil {
 		return &[]User{}, err
 	}
