@@ -10,5 +10,5 @@ spec:
     app: devsmd-user-service               # Selects any Pod with labels `app=golang-app-postgres`
   ports:
     - name: http
-      port: 8080
-      targetPort: 8080
+      port: 8000
+      targetPort: 8000
