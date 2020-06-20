@@ -7,8 +7,8 @@ spec:
   group: traefik.containo.us
   version: v1alpha1
   names:
-    kind: IngressRoute
     plural: ingressroutes
+    kind: IngressRoute
     singular: ingressroute
   scope: Namespaced
 
@@ -116,6 +116,36 @@ rules:
       - watch
 
 ---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: traefik-ingress-controller
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - services
+      - endpoints
+      - secrets
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - extensions
+    resources:
+      - ingresses
+    verbs:
+      - get
+      - list
+      - watch
+---
+kind: ServiceAccount
+apiVersion: v1
+metadata:
+  name: traefik-ingress-controller
+  namespace: default
+---
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
@@ -126,5 +156,5 @@ roleRef:
   name: traefik-ingress-controller
 subjects:
   - kind: ServiceAccount
-    name: traefik
-    namespace: kube-system
+    name: traefik-ingress-controller
+    namespace: default

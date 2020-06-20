@@ -12,16 +12,16 @@ import (
 )
 
 func Serve() {
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8000"
-	}
-
 	err := godotenv.Load()
 	if err != nil {
 		fmt.Println("Error load env", err)
 	}
 	fmt.Println("Load env")
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8000"
+	}
 
 	ConnectDB()
 	routes := InitRoutes()
