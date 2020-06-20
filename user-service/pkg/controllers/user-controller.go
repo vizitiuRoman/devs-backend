@@ -47,20 +47,20 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	err = user.Validate(userLoginAction)
 	if err != nil {
-		ERROR(w, http.StatusBadRequest, errors.New(http.StatusText(http.StatusBadRequest)))
+		ERROR(w, http.StatusBadRequest, err)
 		return
 	}
 
 	password := user.Password
 	receivedUser, err := user.FindByEmail()
 	if err != nil {
-		ERROR(w, http.StatusNotFound, errors.New(http.StatusText(http.StatusNotFound)))
+		ERROR(w, http.StatusBadRequest, errors.New("Invalid Email Or Password"))
 		return
 	}
 
 	err = VerifyPassword(receivedUser.Password, password)
 	if err != nil {
-		ERROR(w, http.StatusUnauthorized, errors.New(http.StatusText(http.StatusUnauthorized)))
+		ERROR(w, http.StatusBadRequest, errors.New("Invalid Email Or Password"))
 		return
 	}
 

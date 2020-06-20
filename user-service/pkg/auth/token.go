@@ -42,7 +42,6 @@ func extractToken(r *http.Request) string {
 	if token != "" {
 		return token
 	}
-
 	bearerToken := r.Header.Get("Authorization")
 	if len(strings.Split(bearerToken, " ")) == 2 {
 		return strings.Split(bearerToken, " ")[1]
@@ -100,7 +99,7 @@ func ExtractTokenMetadata(r *http.Request) (*AccessDetails, error) {
 		if !ok {
 			return &AccessDetails{}, errors.New("Can't get refreshUUID")
 		}
-		userID, err := strconv.ParseUint(fmt.Sprintf("%.0f", claims["userID"]), 10, 32)
+		userID, err := strconv.ParseUint(fmt.Sprintf("%.0f", claims[UserID]), 10, 32)
 		if err != nil {
 			return &AccessDetails{}, errors.New("Can't get userID")
 		}

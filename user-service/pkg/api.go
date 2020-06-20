@@ -8,6 +8,7 @@ import (
 
 	. "github.com/devs-backend/user-service/pkg/models"
 	. "github.com/devs-backend/user-service/pkg/routes"
+	"github.com/gorilla/handlers"
 	"github.com/joho/godotenv"
 )
 
@@ -24,8 +25,8 @@ func Serve() {
 	}
 
 	ConnectDB()
-	routes := InitRoutes()
+	routes, headers, methods, origins := InitRoutes()
 
 	fmt.Println("App started", port)
-	log.Fatal(http.ListenAndServe(":"+port, routes))
+	log.Fatal(http.ListenAndServe(":"+port, handlers.CORS(headers, methods, origins)(routes)))
 }
