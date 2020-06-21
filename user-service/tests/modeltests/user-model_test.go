@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"testing"
-	"time"
 
 	. "github.com/devs-backend/user-service/pkg/models"
 	"gopkg.in/stretchr/testify.v1/assert"
@@ -71,8 +70,6 @@ func TestDeleteUserByID(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error Create tokenDetails: %v", err)
 	}
-
-	time.Sleep(time.Second * 10)
 
 	user := User{ID: seededUser.ID}
 	err = user.DeleteByID(tokenDetails.AccessUUID, tokenDetails.RefreshUUID)
