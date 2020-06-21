@@ -109,16 +109,3 @@ func seedUsers() ([]User, error) {
 	}
 	return users, nil
 }
-
-func refreshUserAndPostTable() error {
-	err := DB.DropTableIfExists(&User{}).Error
-	if err != nil {
-		return err
-	}
-	err = DB.AutoMigrate(&User{}).Error
-	if err != nil {
-		return err
-	}
-	log.Printf("Successfully refreshed tables")
-	return nil
-}

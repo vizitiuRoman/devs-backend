@@ -12,7 +12,7 @@ import (
 func TestCreateUser(t *testing.T) {
 	err := refreshUserTable()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Error refreshUserTable: %v", err)
 	}
 
 	user := User{
@@ -37,7 +37,7 @@ func TestCreateUser(t *testing.T) {
 func TestUpdateUser(t *testing.T) {
 	_, err := seedOneUser()
 	if err != nil {
-		fmt.Printf("seedOneUser: %v", err)
+		fmt.Printf("Error seedOneUser: %v", err)
 	}
 
 	user := User{
@@ -59,7 +59,7 @@ func TestUpdateUser(t *testing.T) {
 func TestDeleteUserById(t *testing.T) {
 	_, err := seedOneUser()
 	if err != nil {
-		log.Fatal(err)
+		fmt.Printf("Error seedOneUser: %v", err)
 	}
 
 	user := User{ID: 1}
@@ -75,7 +75,7 @@ func TestDeleteUserById(t *testing.T) {
 func TestFindUserById(t *testing.T) {
 	_, err := seedOneUser()
 	if err != nil {
-		log.Fatal(err)
+		fmt.Printf("Error seedOneUser: %v", err)
 	}
 
 	user := User{ID: 1, Name: "pet"}
@@ -92,7 +92,7 @@ func TestFindUserById(t *testing.T) {
 func TestFindUserByEmail(t *testing.T) {
 	_, err := seedOneUser()
 	if err != nil {
-		log.Fatal(err)
+		fmt.Printf("Error seedOneUser: %v", err)
 	}
 
 	user := User{Email: "devs@gmail.com", Name: "pet"}
@@ -109,12 +109,12 @@ func TestFindUserByEmail(t *testing.T) {
 func TestFindAllUsers(t *testing.T) {
 	err := refreshUserTable()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Error refreshUserTable: %v", err)
 	}
 
 	_, err = seedUsers()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Error seedUsers: %v", err)
 	}
 
 	var user User

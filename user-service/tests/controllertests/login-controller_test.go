@@ -127,7 +127,7 @@ func TestRegisterUser(t *testing.T) {
 func TestLoginUser(t *testing.T) {
 	_, err := seedOneUser()
 	if err != nil {
-		fmt.Printf("seedOneUser: %v", err)
+		fmt.Printf("Error seedOneUser: %v", err)
 	}
 
 	samples := []sample{
@@ -203,7 +203,7 @@ func TestLoginUser(t *testing.T) {
 func TestLogoutUser(t *testing.T) {
 	_, err := seedOneUser()
 	if err != nil {
-		fmt.Printf("seedOneUser: %v", err)
+		fmt.Printf("Error seedOneUser: %v", err)
 	}
 
 	v := sample{
