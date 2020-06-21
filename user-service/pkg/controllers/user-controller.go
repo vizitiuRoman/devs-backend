@@ -37,7 +37,6 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 		ERROR(w, http.StatusInternalServerError, errors.New(http.StatusText(http.StatusInternalServerError)))
 		return
 	}
-
 	JSON(w, http.StatusOK, receivedUsers)
 }
 
