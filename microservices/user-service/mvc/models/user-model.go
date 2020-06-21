@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/badoux/checkmail"
+	"github.com/jinzhu/gorm"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -17,8 +18,8 @@ type UserModel interface {
 	Validate(action string) error
 	Create() (*User, error)
 	Update() (*User, error)
-	DeleteById() (bool, error)
-	FindById() (*User, error)
+	DeleteByID(AccessUUID, RefreshUUID string) error
+	FindByID() (*User, error)
 	FindByEmail() (*User, error)
 	FindAll() (*[]User, error)
 }
@@ -126,15 +127,25 @@ func (user *User) Update() (*User, error) {
 	return user, nil
 }
 
-func (user *User) DeleteById() (bool, error) {
-	err := DB.Debug().Model(&User{}).Where("id = ?", user.ID).Take(&user).Delete(&user).Error
-	if err != nil {
-		return false, err
-	}
-	return true, nil
+func (user *User) DeleteByID(AccessUUID, RefreshUUID string) error {
+	return DB.Transaction(func(tx *gorm.DB) error {
+		err := tx.Debug().Model(&User{}).Where("id = ?", user.ID).Take(&user).Delete(&user).Error
+		if err != nil {
+			return err
+		}
+		token := TokenDetails{
+			AccessUUID:  AccessUUID,
+			RefreshUUID: RefreshUUID,
+		}
+		err = token.DeleteByUUID()
+		if err != nil {
+			return err
+		}
+		return nil
+	})
 }
 
-func (user *User) FindById() (*User, error) {
+func (user *User) FindByID() (*User, error) {
 	err := DB.Debug().Model(&User{}).Where("id = ?", user.ID).Take(&user).Error
 	if err != nil {
 		return &User{}, err

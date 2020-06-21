@@ -5,7 +5,7 @@ import (
 	"log"
 	"testing"
 
-	. "github.com/devs-backend/user-service/pkg/models"
+	. "github.com/devs-backend/user-service/mvc/models"
 	"gopkg.in/stretchr/testify.v1/assert"
 )
 
@@ -56,20 +56,28 @@ func TestUpdateUser(t *testing.T) {
 	assert.Equal(t, updatedUser.LastName, user.LastName)
 }
 
-func TestDeleteUserById(t *testing.T) {
-	_, err := seedOneUser()
+func TestDeleteUserByID(t *testing.T) {
+	seededUser, err := seedOneUser()
 	if err != nil {
 		fmt.Printf("Error seedOneUser: %v", err)
 	}
 
-	user := User{ID: 1}
-	ok, err := user.DeleteById()
+	tokenDetails := &TokenDetails{
+		AccessUUID:  "123-22-444",
+		RefreshUUID: "123-5343-333",
+	}
+	err = tokenDetails.Create(seededUser.ID)
 	if err != nil {
-		t.Errorf("User DeleteById: %v", err)
+		t.Errorf("Error Create tokenDetails: %v", err)
+	}
+
+	user := User{ID: seededUser.ID}
+	err = user.DeleteByID(tokenDetails.AccessUUID, tokenDetails.RefreshUUID)
+	if err != nil {
 		return
 	}
 
-	assert.Equal(t, ok, true)
+	assert.Equal(t, err, nil)
 }
 
 func TestFindUserById(t *testing.T) {
@@ -79,9 +87,9 @@ func TestFindUserById(t *testing.T) {
 	}
 
 	user := User{ID: 1, Name: "pet"}
-	receivedUser, err := user.FindById()
+	receivedUser, err := user.FindByID()
 	if err != nil {
-		t.Errorf("User FindById: %v", err)
+		t.Errorf("User FindByID: %v", err)
 		return
 	}
 
@@ -98,7 +106,7 @@ func TestFindUserByEmail(t *testing.T) {
 	user := User{Email: "devs@gmail.com", Name: "pet"}
 	receivedUser, err := user.FindByEmail()
 	if err != nil {
-		t.Errorf("User FindById: %v", err)
+		t.Errorf("User FindByID: %v", err)
 		return
 	}
 

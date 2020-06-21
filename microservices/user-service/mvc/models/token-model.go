@@ -2,6 +2,7 @@ package models
 
 import (
 	"errors"
+	"net/http"
 	"strconv"
 	"time"
 )
@@ -43,19 +44,19 @@ func (td *TokenDetails) GetByUUID(usrID uint64) (uint64, error) {
 	}
 	userID, _ := strconv.ParseUint(userid, 10, 64)
 	if usrID != userID {
-		return 0, errors.New("Unauthorized")
+		return 0, errors.New(http.StatusText(http.StatusUnauthorized))
 	}
 	return userID, nil
 }
 
 func (td *TokenDetails) DeleteByUUID() error {
-	_, err := Client.Del(td.AccessUUID).Result()
-	if err != nil {
-		return err
+	ok, _ := Client.Del(td.AccessUUID).Result()
+	if ok != 1 {
+		return errors.New("Error Del AccessUUID")
 	}
-	_, err = Client.Del(td.RefreshUUID).Result()
-	if err != nil {
-		return err
+	ok, _ = Client.Del(td.RefreshUUID).Result()
+	if ok != 1 {
+		return errors.New("Error Del RefreshUUID")
 	}
 	return nil
 }

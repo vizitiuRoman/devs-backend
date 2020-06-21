@@ -5,8 +5,8 @@ import (
 	"log"
 	"net/http"
 
-	. "github.com/devs-backend/user-service/pkg/auth"
-	. "github.com/devs-backend/user-service/pkg/utils"
+	. "github.com/devs-backend/user-service/mvc/auth"
+	. "github.com/devs-backend/user-service/mvc/utils"
 )
 
 func MiddlewareJSON(next http.HandlerFunc) http.HandlerFunc {

@@ -4,8 +4,8 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 
-	. "github.com/devs-backend/user-service/pkg/controllers"
-	. "github.com/devs-backend/user-service/pkg/middlewares"
+	. "github.com/devs-backend/user-service/mvc/controllers"
+	. "github.com/devs-backend/user-service/mvc/middlewares"
 )
 
 func InitRoutes() (*mux.Router, handlers.CORSOption, handlers.CORSOption, handlers.CORSOption) {
@@ -18,10 +18,16 @@ func InitRoutes() (*mux.Router, handlers.CORSOption, handlers.CORSOption, handle
 	// Home
 	router.HandleFunc("/", MiddlewareAUTH(GetHome)).Methods("GET")
 
-	// User
+	// Auth
 	router.HandleFunc("/login", MiddlewareJSON(Login)).Methods("POST")
 	router.HandleFunc("/register", MiddlewareJSON(Register)).Methods("POST")
 	router.HandleFunc("/logout", MiddlewareJSON(Logout)).Methods("POST")
+
+	// User
+	router.HandleFunc("/user", MiddlewareAUTH(GetUsers)).Methods("GET")
+	router.HandleFunc("/user/{id}", MiddlewareAUTH(GetUserByID)).Methods("GET")
+	router.HandleFunc("/user", MiddlewareAUTH(UpdateUser)).Methods("POST")
+	router.HandleFunc("/user/{id}", MiddlewareAUTH(DeleteUserByID)).Methods("DELETE")
 
 	return router, headers, methods, origins
 }

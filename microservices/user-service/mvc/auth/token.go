@@ -9,8 +9,8 @@ import (
 	"strings"
 	"time"
 
-	. "github.com/devs-backend/user-service/pkg/models"
-	. "github.com/devs-backend/user-service/pkg/utils"
+	. "github.com/devs-backend/user-service/mvc/models"
+	. "github.com/devs-backend/user-service/mvc/utils"
 	jwt "github.com/dgrijalva/jwt-go"
 	. "github.com/twinj/uuid"
 )
@@ -109,7 +109,7 @@ func ExtractTokenMetadata(r *http.Request) (*AccessDetails, error) {
 			UserID:      userID,
 		}, nil
 	}
-	return &AccessDetails{}, errors.New("Extract token metadata error")
+	return &AccessDetails{}, errors.New("ExtractTokenMetadata error")
 }
 
 func FetchToken(accessDT *AccessDetails) (uint64, error) {
