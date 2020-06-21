@@ -3,6 +3,7 @@ package models
 import (
 	"errors"
 	"html"
+	"log"
 	"strings"
 	"time"
 
@@ -15,8 +16,8 @@ type UserModel interface {
 	Prepare()
 	Validate(action string) error
 	Create() (*User, error)
-	UpdateById() (*User, error)
-	DeleteById(userID uint32) error
+	Update() (*User, error)
+	DeleteById() (bool, error)
 	FindById() (*User, error)
 	FindByEmail() (*User, error)
 	FindAll() (*[]User, error)
@@ -106,10 +107,10 @@ func (user *User) Create() (*User, error) {
 	return user, nil
 }
 
-func (user *User) UpdateById() (*User, error) {
-	err := user.Validate("")
+func (user *User) Update() (*User, error) {
+	err := user.BeforeSave()
 	if err != nil {
-		return &User{}, err
+		log.Fatal(err)
 	}
 
 	err = DB.Debug().Model(&User{}).Where("id = ?", user.ID).Update(&User{
@@ -125,12 +126,12 @@ func (user *User) UpdateById() (*User, error) {
 	return user, nil
 }
 
-func (user *User) DeleteById() error {
+func (user *User) DeleteById() (bool, error) {
 	err := DB.Debug().Model(&User{}).Where("id = ?", user.ID).Take(&user).Delete(&user).Error
 	if err != nil {
-		return err
+		return false, err
 	}
-	return nil
+	return true, nil
 }
 
 func (user *User) FindById() (*User, error) {
@@ -151,7 +152,7 @@ func (user *User) FindByEmail() (*User, error) {
 
 func (user *User) FindAll() (*[]User, error) {
 	var users []User
-	err := DB.Debug().Model(&[]User{}).Limit(100).Find(users).Error
+	err := DB.Debug().Model(&[]User{}).Limit(100).Find(&users).Error
 	if err != nil {
 		return &[]User{}, err
 	}

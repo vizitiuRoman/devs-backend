@@ -27,7 +27,7 @@ type sample struct {
 func TestRegisterUser(t *testing.T) {
 	err := refreshUserTable()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Error refreshing user table %v", err)
 	}
 
 	samples := []sample{
@@ -94,7 +94,7 @@ func TestRegisterUser(t *testing.T) {
 		responseMap := make(map[string]interface{})
 		err = json.Unmarshal([]byte(rr.Body.String()), &responseMap)
 		if err != nil {
-			fmt.Printf("Cannot convert to json: %v", err)
+			t.Errorf("Cannot convert to json: %v", err)
 		}
 
 		assert.Equal(t, rr.Code, v.statusCode)
@@ -127,7 +127,7 @@ func TestRegisterUser(t *testing.T) {
 func TestLoginUser(t *testing.T) {
 	_, err := seedOneUser()
 	if err != nil {
-		fmt.Printf("SeedOneUser: %v", err)
+		fmt.Printf("seedOneUser: %v", err)
 	}
 
 	samples := []sample{
@@ -169,7 +169,7 @@ func TestLoginUser(t *testing.T) {
 		responseMap := make(map[string]interface{})
 		err = json.Unmarshal([]byte(rr.Body.String()), &responseMap)
 		if err != nil {
-			fmt.Printf("Cannot convert to json: %v", err)
+			t.Errorf("Cannot convert to json: %v", err)
 		}
 
 		assert.Equal(t, rr.Code, v.statusCode)
@@ -203,7 +203,7 @@ func TestLoginUser(t *testing.T) {
 func TestLogoutUser(t *testing.T) {
 	_, err := seedOneUser()
 	if err != nil {
-		fmt.Printf("SeedOneUser: %v", err)
+		fmt.Printf("seedOneUser: %v", err)
 	}
 
 	v := sample{
@@ -226,7 +226,7 @@ func TestLogoutUser(t *testing.T) {
 	responseMap := make(map[string]interface{})
 	err = json.Unmarshal([]byte(rr.Body.String()), &responseMap)
 	if err != nil {
-		fmt.Printf("Cannot convert to json: %v", err)
+		t.Errorf("Cannot convert to json: %v", err)
 	}
 
 	assert.Equal(t, rr.Code, v.statusCode)
