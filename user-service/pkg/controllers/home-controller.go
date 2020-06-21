@@ -6,5 +6,5 @@ import (
 )
 
 func GetHome(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Welcome to Devsdm")
+	fmt.Fprintf(w, "User Service Ready")
 }

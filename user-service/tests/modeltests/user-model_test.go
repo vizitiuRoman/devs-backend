@@ -63,9 +63,9 @@ func TestDeleteUserById(t *testing.T) {
 	}
 
 	user := User{ID: 1}
-	ok, err := user.DeleteById()
+	ok, err := user.DeleteByID()
 	if err != nil {
-		t.Errorf("User DeleteById: %v", err)
+		t.Errorf("User DeleteByID: %v", err)
 		return
 	}
 
@@ -79,9 +79,9 @@ func TestFindUserById(t *testing.T) {
 	}
 
 	user := User{ID: 1, Name: "pet"}
-	receivedUser, err := user.FindById()
+	receivedUser, err := user.FindByID()
 	if err != nil {
-		t.Errorf("User FindById: %v", err)
+		t.Errorf("User FindByID: %v", err)
 		return
 	}
 
@@ -98,7 +98,7 @@ func TestFindUserByEmail(t *testing.T) {
 	user := User{Email: "devs@gmail.com", Name: "pet"}
 	receivedUser, err := user.FindByEmail()
 	if err != nil {
-		t.Errorf("User FindById: %v", err)
+		t.Errorf("User FindByID: %v", err)
 		return
 	}
 

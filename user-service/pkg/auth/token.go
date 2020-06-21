@@ -109,7 +109,7 @@ func ExtractTokenMetadata(r *http.Request) (*AccessDetails, error) {
 			UserID:      userID,
 		}, nil
 	}
-	return &AccessDetails{}, errors.New("Extract token metadata error")
+	return &AccessDetails{}, errors.New("ExtractTokenMetadata error")
 }
 
 func FetchToken(accessDT *AccessDetails) (uint64, error) {
