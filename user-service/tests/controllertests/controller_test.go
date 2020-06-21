@@ -75,7 +75,7 @@ func seedOneUser() (User, error) {
 	}
 
 	user := User{
-		Email:    "pet@gmail.com",
+		Email:    "devs@gmail.com",
 		Password: "password",
 		Name:     "pet",
 		LastName: "pets",
