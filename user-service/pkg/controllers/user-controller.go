@@ -41,7 +41,7 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 	JSON(w, http.StatusOK, receivedUsers)
 }
 
-func DeleteUser(w http.ResponseWriter, r *http.Request) {
+func DeleteUserByID(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	userID, err := strconv.ParseUint(vars["id"], 10, 64)
 	if err != nil {

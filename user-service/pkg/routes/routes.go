@@ -27,7 +27,7 @@ func InitRoutes() (*mux.Router, handlers.CORSOption, handlers.CORSOption, handle
 	router.HandleFunc("/user", MiddlewareAUTH(GetUsers)).Methods("GET")
 	router.HandleFunc("/user/{id}", MiddlewareAUTH(GetUserByID)).Methods("GET")
 	router.HandleFunc("/user", MiddlewareAUTH(UpdateUser)).Methods("POST")
-	router.HandleFunc("/user/{id}", MiddlewareAUTH(DeleteUser)).Methods("DELETE")
+	router.HandleFunc("/user/{id}", MiddlewareAUTH(DeleteUserByID)).Methods("DELETE")
 
 	return router, headers, methods, origins
 }
