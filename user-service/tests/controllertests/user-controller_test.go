@@ -9,9 +9,9 @@ import (
 	"strconv"
 	"testing"
 
-	. "github.com/devs-backend/user-service/pkg/auth"
-	. "github.com/devs-backend/user-service/pkg/controllers"
-	"github.com/devs-backend/user-service/pkg/models"
+	. "github.com/devs-backend/user-service/mvc/auth"
+	. "github.com/devs-backend/user-service/mvc/controllers"
+	"github.com/devs-backend/user-service/mvc/models"
 	"github.com/gorilla/mux"
 	"gopkg.in/stretchr/testify.v1/assert"
 )

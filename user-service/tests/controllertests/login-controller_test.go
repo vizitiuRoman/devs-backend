@@ -9,8 +9,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	. "github.com/devs-backend/user-service/pkg/auth"
-	. "github.com/devs-backend/user-service/pkg/controllers"
+	. "github.com/devs-backend/user-service/mvc/auth"
+	. "github.com/devs-backend/user-service/mvc/controllers"
 	"gopkg.in/stretchr/testify.v1/assert"
 )
 

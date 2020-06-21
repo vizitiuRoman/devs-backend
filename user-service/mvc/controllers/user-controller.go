@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"strconv"
 
-	. "github.com/devs-backend/user-service/pkg/auth"
-	. "github.com/devs-backend/user-service/pkg/models"
-	. "github.com/devs-backend/user-service/pkg/utils"
+	. "github.com/devs-backend/user-service/mvc/auth"
+	. "github.com/devs-backend/user-service/mvc/models"
+	. "github.com/devs-backend/user-service/mvc/utils"
 	"github.com/gorilla/mux"
 )
 

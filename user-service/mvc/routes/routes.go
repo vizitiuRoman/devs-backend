@@ -4,8 +4,8 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 
-	. "github.com/devs-backend/user-service/pkg/controllers"
-	. "github.com/devs-backend/user-service/pkg/middlewares"
+	. "github.com/devs-backend/user-service/mvc/controllers"
+	. "github.com/devs-backend/user-service/mvc/middlewares"
 )
 
 func InitRoutes() (*mux.Router, handlers.CORSOption, handlers.CORSOption, handlers.CORSOption) {

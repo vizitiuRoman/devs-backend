@@ -6,7 +6,7 @@ import (
 	"os"
 	"testing"
 
-	. "github.com/devs-backend/user-service/pkg/models"
+	. "github.com/devs-backend/user-service/mvc/models"
 	"github.com/go-redis/redis/v7"
 	"github.com/jinzhu/gorm"
 	"github.com/joho/godotenv"
