@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"testing"
+	"time"
 
 	. "github.com/devs-backend/user-service/pkg/models"
 	"gopkg.in/stretchr/testify.v1/assert"
@@ -56,20 +57,30 @@ func TestUpdateUser(t *testing.T) {
 	assert.Equal(t, updatedUser.LastName, user.LastName)
 }
 
-func TestDeleteUserById(t *testing.T) {
-	_, err := seedOneUser()
+func TestDeleteUserByID(t *testing.T) {
+	seededUser, err := seedOneUser()
 	if err != nil {
 		fmt.Printf("Error seedOneUser: %v", err)
 	}
 
-	user := User{ID: 1}
-	ok, err := user.DeleteByID()
+	tokenDetails := &TokenDetails{
+		AccessUUID:  "123-22-444",
+		RefreshUUID: "123-5343-333",
+	}
+	err = tokenDetails.Create(seededUser.ID)
 	if err != nil {
-		t.Errorf("User DeleteByID: %v", err)
+		t.Errorf("Error Create tokenDetails: %v", err)
+	}
+
+	time.Sleep(time.Second * 10)
+
+	user := User{ID: seededUser.ID}
+	err = user.DeleteByID(tokenDetails.AccessUUID, tokenDetails.RefreshUUID)
+	if err != nil {
 		return
 	}
 
-	assert.Equal(t, ok, true)
+	assert.Equal(t, err, nil)
 }
 
 func TestFindUserById(t *testing.T) {

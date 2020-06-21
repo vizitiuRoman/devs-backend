@@ -129,7 +129,7 @@ func (user *User) Update() (*User, error) {
 
 func (user *User) DeleteByID(AccessUUID, RefreshUUID string) error {
 	return DB.Transaction(func(tx *gorm.DB) error {
-		err := DB.Debug().Model(&User{}).Where("id = ?", user.ID).Take(&user).Delete(&user).Error
+		err := tx.Debug().Model(&User{}).Where("id = ?", user.ID).Take(&user).Delete(&user).Error
 		if err != nil {
 			return err
 		}

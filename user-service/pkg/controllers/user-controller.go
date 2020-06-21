@@ -16,6 +16,7 @@ func GetUserByID(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	userID, err := strconv.ParseUint(vars["id"], 10, 64)
 	if err != nil {
+		fmt.Println(err)
 		ERROR(w, http.StatusUnprocessableEntity, errors.New(http.StatusText(http.StatusUnprocessableEntity)))
 		return
 	}
@@ -50,7 +51,7 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 
 	extractedToken, err := ExtractTokenMetadata(r)
 	if err != nil {
-		ERROR(w, http.StatusUnprocessableEntity, errors.New(http.StatusText(http.StatusUnprocessableEntity)))
+		ERROR(w, http.StatusUnauthorized, errors.New(http.StatusText(http.StatusUnauthorized)))
 		return
 	}
 
@@ -79,7 +80,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	extractedToken, err := ExtractTokenMetadata(r)
 	if err != nil {
-		ERROR(w, http.StatusUnprocessableEntity, errors.New(http.StatusText(http.StatusUnprocessableEntity)))
+		ERROR(w, http.StatusUnauthorized, errors.New(http.StatusText(http.StatusUnauthorized)))
 		return
 	}
 

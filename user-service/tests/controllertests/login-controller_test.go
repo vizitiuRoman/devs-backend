@@ -15,6 +15,8 @@ import (
 )
 
 type sample struct {
+	id           int
+	uid          string
 	inputJSON    string
 	statusCode   int
 	name         string
@@ -94,12 +96,12 @@ func TestRegisterUser(t *testing.T) {
 		responseMap := make(map[string]interface{})
 		err = json.Unmarshal([]byte(rr.Body.String()), &responseMap)
 		if err != nil {
-			t.Errorf("Cannot convert to json: %v", err)
+			t.Errorf("Can't convert to json: %v", err)
 		}
 
 		assert.Equal(t, rr.Code, v.statusCode)
 		if v.statusCode == 201 {
-			bearerToken := "Bearer " + responseMap["token"].(string)
+			bearerToken := fmt.Sprintf("Bearer %v", responseMap["token"].(string))
 			req.Header.Set("Authorization", bearerToken)
 
 			assert.NotEmpty(t, responseMap["token"])
@@ -169,12 +171,12 @@ func TestLoginUser(t *testing.T) {
 		responseMap := make(map[string]interface{})
 		err = json.Unmarshal([]byte(rr.Body.String()), &responseMap)
 		if err != nil {
-			t.Errorf("Cannot convert to json: %v", err)
+			t.Errorf("Can't convert to json: %v", err)
 		}
 
 		assert.Equal(t, rr.Code, v.statusCode)
 		if v.statusCode == 201 || v.statusCode == 200 {
-			bearerToken := "Bearer " + responseMap["token"].(string)
+			bearerToken := fmt.Sprintf("Bearer %v", responseMap["token"].(string))
 			req.Header.Set("Authorization", bearerToken)
 
 			assert.NotEmpty(t, responseMap["token"])
@@ -226,7 +228,7 @@ func TestLogoutUser(t *testing.T) {
 	responseMap := make(map[string]interface{})
 	err = json.Unmarshal([]byte(rr.Body.String()), &responseMap)
 	if err != nil {
-		t.Errorf("Cannot convert to json: %v", err)
+		t.Errorf("Can't convert to json: %v", err)
 	}
 
 	assert.Equal(t, rr.Code, v.statusCode)
@@ -236,7 +238,7 @@ func TestLogoutUser(t *testing.T) {
 			t.Errorf("NewRequest: %v", err)
 		}
 
-		bearerToken := "Bearer " + responseMap["token"].(string)
+		bearerToken := fmt.Sprintf("Bearer %v", responseMap["token"].(string))
 		rq.Header.Set("Authorization", bearerToken)
 
 		r := httptest.NewRecorder()
