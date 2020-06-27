@@ -32,6 +32,6 @@ kubectl rollout restart deploy devsmd-middleware-service
 
 docker build -t devsmd/middleware-service .
 
-docker tag devsmd/user-middleware devsmd/user-service:1.3.2
+docker tag devsmd/middleware-service devsmd/middleware-service:1.3.2
 
 docker push devsmd/middleware-service:1.3.2
