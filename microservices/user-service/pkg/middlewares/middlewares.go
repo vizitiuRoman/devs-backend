@@ -2,7 +2,6 @@ package middlewares
 
 import (
 	"errors"
-	"log"
 	"net/http"
 
 	. "github.com/devs-backend/user-service/pkg/auth"

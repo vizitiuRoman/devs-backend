@@ -27,6 +27,6 @@ func Serve() {
 	ConnectDB()
 	routes, headers, methods, origins := InitRoutes()
 
-	fmt.Println("App started", port)
+	fmt.Println("User-service started", port)
 	log.Fatal(http.ListenAndServe(":"+port, handlers.CORS(headers, methods, origins)(routes)))
 }

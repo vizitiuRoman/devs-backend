@@ -55,7 +55,6 @@ func CreateToken(userID uint32) (string, error) {
 	accessUUID := NewV4().String()
 	refreshUUID := NewV4().String()
 	claims := jwt.MapClaims{}
-	claims[Authorized] = true
 	claims[UserID] = userID
 	claims[AccessUUID] = accessUUID
 	claims[RefreshUUID] = refreshUUID
