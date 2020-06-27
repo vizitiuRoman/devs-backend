@@ -18,6 +18,19 @@ import (
 
 var Client *redis.Client
 
+const (
+	UserID      = "userID"
+	AccessUUID  = "accessUUID"
+	RefreshUUID = "refreshUUID"
+)
+
+type accessDetails struct {
+	AccessToken string
+	AccessUUID  string
+	RefreshUUID string
+	UserID      uint64
+}
+
 func main() {
 	err := godotenv.Load()
 	if err != nil {
@@ -53,13 +66,13 @@ func main() {
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	token, err := ExtractTokenMetadata(r)
+	token, err := extractTokenMetadata(r)
 	if err != nil {
 		ERROR(w, http.StatusUnauthorized, errors.New(http.StatusText(http.StatusUnauthorized)))
 		return
 	}
 
-	_, err = FetchToken(&AccessDetails{
+	_, err = fetchToken(&accessDetails{
 		AccessUUID: token.AccessUUID,
 		UserID:     token.UserID,
 	})
@@ -69,39 +82,6 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	JSON(w, http.StatusOK, true)
-}
-
-func JSON(w http.ResponseWriter, statusCode int, data interface{}) {
-	w.WriteHeader(statusCode)
-	err := json.NewEncoder(w).Encode(data)
-	if err != nil {
-		fmt.Fprintf(w, "%s", err.Error())
-	}
-}
-
-func ERROR(w http.ResponseWriter, statusCode int, err error) {
-	if err != nil {
-		JSON(w, statusCode, struct {
-			Error string `json:"error"`
-		}{
-			Error: err.Error(),
-		})
-		return
-	}
-	JSON(w, http.StatusBadRequest, err)
-}
-
-const (
-	UserID      = "userID"
-	AccessUUID  = "accessUUID"
-	RefreshUUID = "refreshUUID"
-)
-
-type AccessDetails struct {
-	AccessToken string
-	AccessUUID  string
-	RefreshUUID string
-	UserID      uint64
 }
 
 func prepareToken(extractedToken string) (*jwt.Token, error) {
@@ -130,40 +110,40 @@ func extractToken(r *http.Request) string {
 	return ""
 }
 
-func ExtractTokenMetadata(r *http.Request) (*AccessDetails, error) {
+func extractTokenMetadata(r *http.Request) (*accessDetails, error) {
 	extractedToken := extractToken(r)
 	if extractedToken == "" {
-		return &AccessDetails{}, errors.New("Can't extract token")
+		return &accessDetails{}, errors.New("Can't extract token")
 	}
 
 	token, err := prepareToken(extractedToken)
 	if err != nil {
-		return &AccessDetails{}, err
+		return &accessDetails{}, err
 	}
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		accessUUID, ok := claims[AccessUUID].(string)
 		if !ok {
-			return &AccessDetails{}, errors.New("Can't get accessUUID")
+			return &accessDetails{}, errors.New("Can't get accessUUID")
 		}
 		refreshUUID, ok := claims[RefreshUUID].(string)
 		if !ok {
-			return &AccessDetails{}, errors.New("Can't get refreshUUID")
+			return &accessDetails{}, errors.New("Can't get refreshUUID")
 		}
 		userID, err := strconv.ParseUint(fmt.Sprintf("%.0f", claims[UserID]), 10, 32)
 		if err != nil {
-			return &AccessDetails{}, errors.New("Can't get userID")
+			return &accessDetails{}, errors.New("Can't get userID")
 		}
-		return &AccessDetails{
+		return &accessDetails{
 			AccessUUID:  accessUUID,
 			RefreshUUID: refreshUUID,
 			UserID:      userID,
 		}, nil
 	}
-	return &AccessDetails{}, errors.New("ExtractTokenMetadata error")
+	return &accessDetails{}, errors.New("ExtractTokenMetadata error")
 }
 
-func FetchToken(accessDT *AccessDetails) (uint64, error) {
+func fetchToken(accessDT *accessDetails) (uint64, error) {
 	userid, err := Client.Get(accessDT.AccessUUID).Result()
 	if err != nil {
 		return 0, err
@@ -174,4 +154,24 @@ func FetchToken(accessDT *AccessDetails) (uint64, error) {
 		return 0, errors.New(http.StatusText(http.StatusUnauthorized))
 	}
 	return userID, nil
+}
+
+func JSON(w http.ResponseWriter, statusCode int, data interface{}) {
+	w.WriteHeader(statusCode)
+	err := json.NewEncoder(w).Encode(data)
+	if err != nil {
+		fmt.Fprintf(w, "%s", err.Error())
+	}
+}
+
+func ERROR(w http.ResponseWriter, statusCode int, err error) {
+	if err != nil {
+		JSON(w, statusCode, struct {
+			Error string `json:"error"`
+		}{
+			Error: err.Error(),
+		})
+		return
+	}
+	JSON(w, http.StatusBadRequest, err)
 }
