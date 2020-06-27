@@ -1,7 +1,7 @@
 package main
 
-import "github.com/devs-backend/user-service/mvc"
+import "github.com/devs-backend/user-service/pkg"
 
 func main() {
-	mvc.Serve()
+	pkg.Serve()
 }

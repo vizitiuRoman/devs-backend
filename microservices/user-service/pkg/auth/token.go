@@ -9,8 +9,8 @@ import (
 	"strings"
 	"time"
 
-	. "github.com/devs-backend/user-service/mvc/models"
-	. "github.com/devs-backend/user-service/mvc/utils"
+	. "github.com/devs-backend/user-service/pkg/models"
+	. "github.com/devs-backend/user-service/pkg/utils"
 	jwt "github.com/dgrijalva/jwt-go"
 	. "github.com/twinj/uuid"
 )
@@ -55,7 +55,6 @@ func CreateToken(userID uint32) (string, error) {
 	accessUUID := NewV4().String()
 	refreshUUID := NewV4().String()
 	claims := jwt.MapClaims{}
-	claims[Authorized] = true
 	claims[UserID] = userID
 	claims[AccessUUID] = accessUUID
 	claims[RefreshUUID] = refreshUUID

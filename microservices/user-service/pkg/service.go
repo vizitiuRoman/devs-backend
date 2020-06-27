@@ -1,4 +1,4 @@
-package mvc
+package pkg
 
 import (
 	"fmt"
@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"os"
 
-	. "github.com/devs-backend/user-service/mvc/models"
-	. "github.com/devs-backend/user-service/mvc/routes"
+	. "github.com/devs-backend/user-service/pkg/models"
+	. "github.com/devs-backend/user-service/pkg/routes"
 	"github.com/gorilla/handlers"
 	"github.com/joho/godotenv"
 )
@@ -21,12 +21,12 @@ func Serve() {
 
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "8000"
+		port = "8080"
 	}
 
 	ConnectDB()
 	routes, headers, methods, origins := InitRoutes()
 
-	fmt.Println("App started", port)
+	fmt.Println("User-service started", port)
 	log.Fatal(http.ListenAndServe(":"+port, handlers.CORS(headers, methods, origins)(routes)))
 }

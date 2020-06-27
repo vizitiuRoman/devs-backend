@@ -8,21 +8,9 @@ kubectl create -f user-service-secret.yaml
 
 kubectl get secrets
 
-kubectl apply -f pg-db-pv.yaml
-
-kubectl apply -f pg-db-pvc.yaml
-
-kubectl apply -f pg-db-deployment.yaml
-
-kubectl apply -f pg-db-service.yaml
-
 kubectl apply -f user-service-deployment.yaml
 
 kubectl apply -f user-service.yaml
-
-kubectl apply -f redis-master-deployment.yaml
-
-kubectl apply -f redis-master-service.yaml
 
 // delete 
 
