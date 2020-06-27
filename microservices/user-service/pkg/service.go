@@ -1,4 +1,4 @@
-package mvc
+package pkg
 
 import (
 	"fmt"
@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"os"
 
-	. "github.com/devs-backend/user-service/mvc/models"
-	. "github.com/devs-backend/user-service/mvc/routes"
+	. "github.com/devs-backend/user-service/pkg/models"
+	. "github.com/devs-backend/user-service/pkg/routes"
 	"github.com/gorilla/handlers"
 	"github.com/joho/godotenv"
 )

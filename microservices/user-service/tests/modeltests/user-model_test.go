@@ -5,7 +5,7 @@ import (
 	"log"
 	"testing"
 
-	. "github.com/devs-backend/user-service/mvc/models"
+	. "github.com/devs-backend/user-service/pkg/models"
 	"gopkg.in/stretchr/testify.v1/assert"
 )
 
