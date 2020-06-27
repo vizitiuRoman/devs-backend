@@ -21,7 +21,6 @@ func MiddlewareAUTH(next http.HandlerFunc) http.HandlerFunc {
 		w.Header().Set("Content-Type", "application/json")
 		token, err := ExtractTokenMetadata(r)
 		if err != nil {
-			log.Println("MiddlewareAUTH-ExtractTokenMetadata:", err)
 			ERROR(w, http.StatusUnauthorized, errors.New(http.StatusText(http.StatusUnauthorized)))
 			return
 		}
@@ -31,7 +30,6 @@ func MiddlewareAUTH(next http.HandlerFunc) http.HandlerFunc {
 			UserID:     token.UserID,
 		})
 		if err != nil {
-			log.Println("MiddlewareAUTH-FetchToken:", err)
 			ERROR(w, http.StatusUnauthorized, errors.New(http.StatusText(http.StatusUnauthorized)))
 			return
 		}
