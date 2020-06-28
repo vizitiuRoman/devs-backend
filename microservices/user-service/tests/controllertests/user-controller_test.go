@@ -176,70 +176,62 @@ func TestUpdateUser(t *testing.T) {
 	}
 
 	user := users[0]
-	_, err = CreateToken(user.ID)
+	token, err := CreateToken(user.ID)
 	if err != nil {
 		log.Fatalf("Error CreateToken: %v", err)
 	}
 
-	//bearerToken := fmt.Sprintf("Bearer %v", token)
-	//samples := []sample{
-	//	{
-	//		inputJSON:    `{"email": "gopher@gmail.com", "name": "", "lastName": "chitaica", "password": "devsmd"}`,
-	//		statusCode:   400,
-	//		token:        "",
-	//		name:         "",
-	//		email:        "gopher@gmail.com",
-	//		lastName:     "gopher",
-	//		errorMessage: "Required Name",
-	//	},
-	//	{
-	//		inputJSON:    `{"email": "gopher@gmail.com", "name": "gopher", "lastName": "", "password": "devsmd"}`,
-	//		statusCode:   400,
-	//		token:        "",
-	//		name:         "gopher",
-	//		email:        "gopher@gmail.com",
-	//		lastName:     "",
-	//		errorMessage: "Required Last Name",
-	//	},
-	//	{
-	//		inputJSON:    `{"email": "gopher@gmail.com", "name": "gopher", "lastName": "chitaica", "password": ""}`,
-	//		statusCode:   400,
-	//		token:        "",
-	//		name:         "gopher",
-	//		email:        "gopher@gmail.com",
-	//		lastName:     "chitaica",
-	//		errorMessage: "Required Password",
-	//	},
-	//	{
-	//		inputJSON:    `{"email": "devsmd", "name": "gopher", "lastName": "chitaica", "password": "devsmd"}`,
-	//		statusCode:   400,
-	//		token:        "",
-	//		name:         "gopher",
-	//		email:        "devsmd",
-	//		lastName:     "chitaica",
-	//		errorMessage: "Invalid Email",
-	//	},
-	//	{
-	//		inputJSON:    `{"email": "devsmd", "name": "gopher", "lastName": "chitaica", "password": "devsmd"}`,
-	//		statusCode:   400,
-	//		token:        "",
-	//		name:         "gopher",
-	//		email:        "devsmd",
-	//		lastName:     "chitaica",
-	//		errorMessage: "Invalid Email",
-	//	},
-	//	{
-	//		inputJSON:    `{"email": "gopher@gmail.com", "name": "gopher", "lastName": "chitaica", "password": "devsmd"}`,
-	//		statusCode:   200,
-	//		token:        bearerToken,
-	//		name:         "gopher",
-	//		email:        "gopher@gmail.com",
-	//		lastName:     "chitaica",
-	//		errorMessage: "",
-	//	},
-	//}
+	bearerToken := fmt.Sprintf("Bearer %v", token)
+	samples := []sample{
+		{
+			inputJSON:    `{"email": "gopher@gmail.com", "name": "", "lastName": "chitaica", "password": "devsmd"}`,
+			statusCode:   400,
+			token:        "",
+			name:         "",
+			email:        "gopher@gmail.com",
+			lastName:     "gopher",
+			errorMessage: "Required Name",
+		},
+		{
+			inputJSON:    `{"email": "gopher@gmail.com", "name": "gopher", "lastName": "", "password": "devsmd"}`,
+			statusCode:   400,
+			token:        "",
+			name:         "gopher",
+			email:        "gopher@gmail.com",
+			lastName:     "",
+			errorMessage: "Required Last Name",
+		},
+		{
+			inputJSON:    `{"email": "devsmd", "name": "gopher", "lastName": "chitaica", "password": "devsmd"}`,
+			statusCode:   400,
+			token:        "",
+			name:         "gopher",
+			email:        "devsmd",
+			lastName:     "chitaica",
+			errorMessage: "Invalid Email",
+		},
+		{
+			inputJSON:    `{"email": "devsmd", "name": "gopher", "lastName": "chitaica", "password": "devsmd"}`,
+			statusCode:   400,
+			token:        "",
+			name:         "gopher",
+			email:        "devsmd",
+			lastName:     "chitaica",
+			errorMessage: "Invalid Email",
+		},
+		{
+			id:           1,
+			inputJSON:    `{"email": "gopher@gmail.com", "name": "gopher", "lastName": "chitaica", "password": "devsmd"}`,
+			statusCode:   200,
+			token:        bearerToken,
+			name:         "gopher",
+			email:        "gopher@gmail.com",
+			lastName:     "chitaica",
+			errorMessage: "",
+		},
+	}
 
-	//for _, v := range samples {
-	//	fmt.Println(v)
-	//}
+	for _, v := range samples {
+		fmt.Println(v)
+	}
 }
