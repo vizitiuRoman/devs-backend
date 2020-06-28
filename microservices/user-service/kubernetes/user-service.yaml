@@ -9,6 +9,7 @@ spec:
   selector:
     app: devsmd-user-service               # Selects any Pod with labels `app=golang-app-postgres`
   ports:
-    - name: http
-      port: 8080
+    - protocol: TCP
+      port: 80
       targetPort: 8080
+      name: http
