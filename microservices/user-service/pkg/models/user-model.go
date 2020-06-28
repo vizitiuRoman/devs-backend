@@ -101,7 +101,7 @@ func hashPassword(password string) ([]byte, error) {
 // Query to database
 
 func (user *User) Create() (*User, error) {
-	err := DB.Debug().Model(&User{}).Create(&user).Error
+	err := DB.Model(&User{}).Create(&user).Error
 	if err != nil {
 		return &User{}, err
 	}
@@ -114,7 +114,7 @@ func (user *User) Update() (*User, error) {
 		log.Fatal(err)
 	}
 
-	err = DB.Debug().Model(&User{}).Where("id = ?", user.ID).Update(&User{
+	err = DB.Model(&User{}).Where("id = ?", user.ID).Update(&User{
 		Email:    user.Email,
 		Password: user.Password,
 		Name:     user.Name,
@@ -129,7 +129,7 @@ func (user *User) Update() (*User, error) {
 
 func (user *User) DeleteByID(AccessUUID, RefreshUUID string) error {
 	return DB.Transaction(func(tx *gorm.DB) error {
-		err := tx.Debug().Model(&User{}).Where("id = ?", user.ID).Take(&user).Delete(&user).Error
+		err := tx.Model(&User{}).Where("id = ?", user.ID).Take(&user).Delete(&user).Error
 		if err != nil {
 			return err
 		}
@@ -146,7 +146,7 @@ func (user *User) DeleteByID(AccessUUID, RefreshUUID string) error {
 }
 
 func (user *User) FindByID() (*User, error) {
-	err := DB.Debug().Model(&User{}).Where("id = ?", user.ID).Take(&user).Error
+	err := DB.Model(&User{}).Where("id = ?", user.ID).Take(&user).Error
 	if err != nil {
 		return &User{}, err
 	}
@@ -154,7 +154,7 @@ func (user *User) FindByID() (*User, error) {
 }
 
 func (user *User) FindByEmail() (*User, error) {
-	err := DB.Debug().Model(&User{}).Where("email = ?", user.Email).Take(&user).Error
+	err := DB.Model(&User{}).Where("email = ?", user.Email).Take(&user).Error
 	if err != nil {
 		return &User{}, err
 	}
@@ -163,7 +163,7 @@ func (user *User) FindByEmail() (*User, error) {
 
 func (user *User) FindAll() (*[]User, error) {
 	var users []User
-	err := DB.Debug().Model(&[]User{}).Limit(100).Find(&users).Error
+	err := DB.Model(&[]User{}).Limit(100).Find(&users).Error
 	if err != nil {
 		return &[]User{}, err
 	}

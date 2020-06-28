@@ -67,7 +67,6 @@ func DeleteUserByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Entity", fmt.Sprintf("%d", userID))
 	JSON(w, http.StatusOK, true)
 }
 

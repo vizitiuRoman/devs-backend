@@ -11,7 +11,7 @@ func InitRoutes() *mux.Router {
 	router := mux.NewRouter()
 
 	// Home
-	router.HandleFunc("/", MiddlewareAUTH(GetHome)).Methods("GET")
+	router.HandleFunc("/", GetHome).Methods("GET")
 
 	// Auth
 	router.HandleFunc("/login", MiddlewareJSON(Login)).Methods("POST")
@@ -19,7 +19,7 @@ func InitRoutes() *mux.Router {
 	router.HandleFunc("/logout", MiddlewareJSON(Logout)).Methods("POST")
 
 	// User
-	router.HandleFunc("/user", MiddlewareAUTH(GetUsers)).Methods("GET")
+	router.HandleFunc("/users", MiddlewareAUTH(GetUsers)).Methods("GET")
 	router.HandleFunc("/user/{id}", MiddlewareAUTH(GetUserByID)).Methods("GET")
 	router.HandleFunc("/user", MiddlewareAUTH(UpdateUser)).Methods("POST")
 	router.HandleFunc("/user/{id}", MiddlewareAUTH(DeleteUserByID)).Methods("DELETE")
