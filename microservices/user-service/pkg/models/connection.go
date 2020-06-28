@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 
 	"github.com/go-redis/redis/v7"
 	"github.com/jinzhu/gorm"
@@ -20,7 +21,10 @@ func ConnectDB() {
 	connectPG(os.Getenv("DB_DRIVER"), os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"),
 		os.Getenv("DB_PORT"), os.Getenv("DB_HOST"), os.Getenv("DB_NAME"),
 	)
+	debug, _ := strconv.ParseBool(os.Getenv("DB_DEBUG"))
+	DB.LogMode(debug)
 	DB.AutoMigrate(&User{})
+	fmt.Println("Debug mode:", debug)
 }
 
 func connectPG(DBDriver, DBUser, DBPassword, DBPort, DBHost, DBName string) {

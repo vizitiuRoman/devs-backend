@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 	"testing"
 
 	. "github.com/devs-backend/user-service/pkg/models"
@@ -23,7 +24,8 @@ func TestMain(m *testing.M) {
 	connectPG(os.Getenv("TEST_DB_DRIVER"), os.Getenv("TEST_DB_USER"), os.Getenv("TEST_DB_PASSWORD"),
 		os.Getenv("TEST_DB_PORT"), os.Getenv("TEST_DB_HOST"), os.Getenv("TEST_DB_NAME"),
 	)
-
+	debug, _ := strconv.ParseBool(os.Getenv("TEST_DB_DEBUG"))
+	DB.LogMode(debug)
 	os.Exit(m.Run())
 }
 
