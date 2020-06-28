@@ -13,11 +13,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-const (
-	userLoginAction   = "login"
-	userDefaultAction = ""
-)
-
 type response struct {
 	UserID   uint32 `json:"userId"`
 	Name     string `json:"name"`
@@ -45,7 +40,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = user.Validate(userLoginAction)
+	err = user.Validate(LOGIN)
 	if err != nil {
 		ERROR(w, http.StatusBadRequest, err)
 		return
@@ -85,7 +80,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = user.Validate(userDefaultAction)
+	err = user.Validate(DEFAULT)
 	if err != nil {
 		ERROR(w, http.StatusBadRequest, err)
 		return

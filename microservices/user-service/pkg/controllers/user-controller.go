@@ -71,9 +71,22 @@ func DeleteUserByID(w http.ResponseWriter, r *http.Request) {
 }
 
 func UpdateUser(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	userID, err := strconv.ParseUint(vars["id"], 10, 64)
+	if err != nil {
+		ERROR(w, http.StatusUnprocessableEntity, errors.New(http.StatusText(http.StatusUnprocessableEntity)))
+		return
+	}
+
 	user, err := prepareUser(r, &User{})
 	if err != nil {
 		ERROR(w, http.StatusUnprocessableEntity, errors.New(http.StatusText(http.StatusUnprocessableEntity)))
+		return
+	}
+
+	err = user.Validate(UPDATE)
+	if err != nil {
+		ERROR(w, http.StatusBadRequest, err)
 		return
 	}
 
@@ -83,14 +96,9 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if user.ID != uint32(extractedToken.UserID) {
+	user.ID = uint32(userID)
+	if userID != extractedToken.UserID {
 		ERROR(w, http.StatusUnauthorized, errors.New(http.StatusText(http.StatusUnauthorized)))
-		return
-	}
-
-	err = user.Validate("")
-	if err != nil {
-		ERROR(w, http.StatusBadRequest, err)
 		return
 	}
 

@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/badoux/checkmail"
+	. "github.com/devs-backend/user-service/pkg/utils"
 	"github.com/jinzhu/gorm"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -59,12 +60,26 @@ func (user *User) Prepare() {
 
 func (user *User) Validate(action string) error {
 	switch strings.ToLower(action) {
-	case "login":
+	case LOGIN:
 		if user.Email == "" {
 			return errors.New("Required Email")
 		}
 		if user.Password == "" {
 			return errors.New("Required Password")
+		}
+		if err := checkmail.ValidateFormat(user.Email); err != nil {
+			return errors.New("Invalid Email")
+		}
+		return nil
+	case UPDATE:
+		if user.Email == "" {
+			return errors.New("Required Email")
+		}
+		if user.Name == "" {
+			return errors.New("Required Name")
+		}
+		if user.LastName == "" {
+			return errors.New("Required Last Name")
 		}
 		if err := checkmail.ValidateFormat(user.Email); err != nil {
 			return errors.New("Invalid Email")
