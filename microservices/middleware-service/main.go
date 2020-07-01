@@ -47,7 +47,7 @@ func main() {
 	})
 	_, err = Client.Ping().Result()
 	if err != nil {
-		fmt.Println("Redis can't connect to", host+":"+redisPort)
+		fmt.Println("Redis cannot connect to", host+":"+redisPort)
 		log.Fatal("Error", err)
 	}
 	fmt.Println("Redis connect to", host+":"+redisPort)
@@ -113,7 +113,7 @@ func extractToken(r *http.Request) string {
 func extractTokenMetadata(r *http.Request) (*accessDetails, error) {
 	extractedToken := extractToken(r)
 	if extractedToken == "" {
-		return &accessDetails{}, errors.New("Can't extract token")
+		return &accessDetails{}, errors.New("Cannot extract token")
 	}
 
 	token, err := prepareToken(extractedToken)
@@ -124,15 +124,15 @@ func extractTokenMetadata(r *http.Request) (*accessDetails, error) {
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		accessUUID, ok := claims[AccessUUID].(string)
 		if !ok {
-			return &accessDetails{}, errors.New("Can't get accessUUID")
+			return &accessDetails{}, errors.New("Cannot get accessUUID")
 		}
 		refreshUUID, ok := claims[RefreshUUID].(string)
 		if !ok {
-			return &accessDetails{}, errors.New("Can't get refreshUUID")
+			return &accessDetails{}, errors.New("Cannot get refreshUUID")
 		}
 		userID, err := strconv.ParseUint(fmt.Sprintf("%.0f", claims[UserID]), 10, 32)
 		if err != nil {
-			return &accessDetails{}, errors.New("Can't get userID")
+			return &accessDetails{}, errors.New("Cannot get userID")
 		}
 		return &accessDetails{
 			AccessUUID:  accessUUID,

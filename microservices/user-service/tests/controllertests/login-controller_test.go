@@ -96,7 +96,7 @@ func TestRegisterUser(t *testing.T) {
 		responseMap := make(map[string]interface{})
 		err = json.Unmarshal([]byte(rr.Body.String()), &responseMap)
 		if err != nil {
-			t.Errorf("Can't convert to json: %v", err)
+			t.Errorf("Cannot convert to json: %v", err)
 		}
 
 		assert.Equal(t, rr.Code, v.statusCode)
@@ -171,7 +171,7 @@ func TestLoginUser(t *testing.T) {
 		responseMap := make(map[string]interface{})
 		err = json.Unmarshal([]byte(rr.Body.String()), &responseMap)
 		if err != nil {
-			t.Errorf("Can't convert to json: %v", err)
+			t.Errorf("Cannot convert to json: %v", err)
 		}
 
 		assert.Equal(t, rr.Code, v.statusCode)
@@ -228,7 +228,7 @@ func TestLogoutUser(t *testing.T) {
 	responseMap := make(map[string]interface{})
 	err = json.Unmarshal([]byte(rr.Body.String()), &responseMap)
 	if err != nil {
-		t.Errorf("Can't convert to json: %v", err)
+		t.Errorf("Cannot convert to json: %v", err)
 	}
 
 	assert.Equal(t, rr.Code, v.statusCode)

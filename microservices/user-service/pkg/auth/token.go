@@ -81,7 +81,7 @@ func CreateToken(userID uint32) (string, error) {
 func ExtractTokenMetadata(r *http.Request) (*AccessDetails, error) {
 	extractedToken := extractToken(r)
 	if extractedToken == "" {
-		return &AccessDetails{}, errors.New("Can't extract token")
+		return &AccessDetails{}, errors.New("Cannot extract token")
 	}
 
 	token, err := prepareToken(extractedToken)
@@ -92,15 +92,15 @@ func ExtractTokenMetadata(r *http.Request) (*AccessDetails, error) {
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		accessUUID, ok := claims[AccessUUID].(string)
 		if !ok {
-			return &AccessDetails{}, errors.New("Can't get accessUUID")
+			return &AccessDetails{}, errors.New("Cannot get accessUUID")
 		}
 		refreshUUID, ok := claims[RefreshUUID].(string)
 		if !ok {
-			return &AccessDetails{}, errors.New("Can't get refreshUUID")
+			return &AccessDetails{}, errors.New("Cannot get refreshUUID")
 		}
 		userID, err := strconv.ParseUint(fmt.Sprintf("%.0f", claims[UserID]), 10, 32)
 		if err != nil {
-			return &AccessDetails{}, errors.New("Can't get userID")
+			return &AccessDetails{}, errors.New("Cannot get userID")
 		}
 		return &AccessDetails{
 			AccessUUID:  accessUUID,
