@@ -1,4 +1,4 @@
-package modeltests
+package controller_tests
 
 import (
 	"fmt"
@@ -10,6 +10,7 @@ import (
 	. "github.com/devs-backend/user-service/pkg/models"
 	"github.com/go-redis/redis/v7"
 	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/joho/godotenv"
 )
 
